@@ -5,7 +5,7 @@ const _Layout = () => {
   return (
     <Tabs>
       <Tabs.Screen
-        name='index'
+        name='dashboard'
         options={{
           title: 'Dashboard',
           headerShown: false
