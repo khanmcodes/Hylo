@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,5 +7,10 @@
 @layer base {
   * {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    patrick-hand {
+      font-family: "Patrick Hand", cursive;
+      font-weight: 400;
+      font-style: normal;
+    }
   }
 }

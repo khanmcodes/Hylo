@@ -39,7 +39,9 @@
     },
     "fonts": [
       {
-        "asset": "./assets/fonts/Inter.ttf"
+        "font1": "./assets/fonts/Inter.ttf",
+        "font2": "./assets/fonts/PatrickHand.ttf",
+        "font3": "./assets/fonts/GochiHand-Regular.ttf"
       }
     ]
   }

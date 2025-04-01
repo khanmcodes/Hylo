@@ -6,6 +6,8 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        'patrick-hand': ['Patrick Hand', 'cursive'],
+        'gochi-hand': ['Gochi Hand', 'cursive'],
       },
       colors: {
         primary: '#4A90E2',
