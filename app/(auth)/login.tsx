@@ -26,7 +26,7 @@ export default function LoginPage() {
           blurRadius={10}
           resizeMode='cover'
         />
-        <View className="w-full max-w-[1200px] bg-transparent lg:bg-[#161616] rounded-2xl p-6 sm:p-8 md:p-10">
+        <View className="w-full max-w-[1200px] bg-transparent lg:bg-[#161616] rounded-2xl p-10 sm:p-8 md:p-10">
           <View className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
             {/* Logo Section */}
             <View className="w-full lg:w-1/2 flex items-center justify-center">
