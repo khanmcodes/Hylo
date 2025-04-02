@@ -1,16 +1,19 @@
 import { Stack, Redirect } from "expo-router";
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from "react";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useState } from "react";
 import "./global.css";
+import { AuthProvider } from "../contexts/AuthContext";
+import { supabase } from "../lib/supabase";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    'Gochi Hand': require('../assets/fonts/GochiHand-Regular.ttf'),
+    "Gochi Hand": require("../assets/fonts/GochiHand-Regular.ttf"),
   });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -19,24 +22,43 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
+  useEffect(() => {
+    // Check if user is authenticated
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      setIsAuthenticated(!!data.session);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  if (!fontsLoaded || isAuthenticated === null) {
     return null;
   }
+
   return (
-    <Stack>
-      <Stack.Screen
-        name="(auth)"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="(tabs)"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="courses/[id]"
-        options={{ headerShown: false }}
-      />
-      <Redirect href="/(auth)/welcome" />
-    </Stack>
+    <AuthProvider>
+      <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="courses/[id]" options={{ headerShown: false }} />
+        {isAuthenticated ? (
+          <Redirect href="/(tabs)/dashboard" />
+        ) : (
+          <Redirect href="/(auth)/welcome" />
+        )}
+      </Stack>
+    </AuthProvider>
   );
 }
