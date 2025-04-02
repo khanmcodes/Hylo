@@ -21,12 +21,16 @@ export default function LoginPage() {
       <View className="flex-1 items-center justify-center p-4">
         <Image
           source={require('../../assets/images/icon.png')}
-          className="absolute top-1/2 right-0 w-screen h-screen opacity-20 sm:opacity-20 lg:opacity-70 -translate-y-1/2"
-          style={{ transform: [{ scale: 3 }, { translateY: -50 }] }}
+          className="absolute right-0 w-screen h-screen opacity-100 lg:opacity-70"
+          style={[
+            Platform.OS === 'web' 
+              ? { transform: [{ scale: 3 }] }
+              : { transform: [{ scale: 1.5 }]}
+          ]}
           blurRadius={10}
           resizeMode='cover'
         />
-        <View className="w-full max-w-[1200px] bg-transparent lg:bg-[#161616] rounded-2xl p-10 sm:p-8 md:p-10">
+        <View className="w-full min-h-[650px] justify-center items-center min-w-[1300px] max-w-[1200px] bg-transparent lg:bg-[#161616] p-10 sm:p-8 md:p-10">
           <View className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
             {/* Logo Section */}
             <View className="w-full lg:w-1/2 flex items-center justify-center">
@@ -41,14 +45,14 @@ export default function LoginPage() {
             </View>
 
             {/* Form Section */}
-            <View className="w-full lg:w-1/2 max-w-[400px] bg-[#0D0D0D] p-6 sm:p-8 md:p-10 rounded-2xl">
+            <View className="w-full min-w-[300px] lg:w-1/2 max-w-[400px] bg-[#0D0D0D] p-6 sm:p-8 md:p-10 rounded-2xl">
 
               <View className="space-y-4 sm:space-y-3">
                 {/* Email Input */}
-                <View className="flex-row items-center bg-dark-200 rounded-lg px-4 mb-3 lg:mb-0">
+                <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3 lg:mb-0">
                   <Feather name="mail" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-5 mx-3"
+                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-4 lg:py-3 mx-3"
                     placeholder="Enter your email"
                     placeholderTextColor="#9CA3AF"
                     value={email}
@@ -59,10 +63,10 @@ export default function LoginPage() {
                 </View>
 
                 {/* Password Input */}
-                <View className="flex-row items-center bg-dark-200 rounded-lg px-4">
+                <View className="flex-row items-center bg-dark-200 rounded-full px-4">
                   <Feather name="key" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 text-white sm:text-lg px-3 py-5 mx-3"
+                    className="flex-1 text-white sm:text-lg px-3 py-4 lg:py-3 mx-3"
                     placeholder="Enter your password"
                     placeholderTextColor="#9CA3AF"
                     value={password}
@@ -76,7 +80,7 @@ export default function LoginPage() {
 
                 {/* Login Button */}
                 <TouchableOpacity
-                  className="bg-primary py-3 sm:py-4 rounded-xl mt-6"
+                  className="bg-primary py-3 rounded-full mt-6"
                   onPress={handleLogin}
                 >
                   <Text className="text-white text-center text-base sm:text-lg md:text-xl font-semibold">
