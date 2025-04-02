@@ -36,7 +36,8 @@ export default function LoginPage() {
       if (error) {
         setErrorMsg(error.message || "Failed to sign in");
       } else {
-        // Navigation is handled by the auth state change in _layout.tsx
+        // Explicitly navigate to dashboard after successful login
+        router.replace("/(tabs)/dashboard");
       }
     } catch (error: any) {
       setErrorMsg(error.message || "An unexpected error occurred");
@@ -130,7 +131,7 @@ export default function LoginPage() {
                   onPress={handleLogin}
                   disabled={loading}
                 >
-                  re{" "}
+                  {" "}
                   <Text className="text-white text-center text-base sm:text-lg md:text-xl font-semibold">
                     {loading ? "Logging in..." : "Login"}
                   </Text>
@@ -172,6 +173,9 @@ export default function LoginPage() {
                                 ? error
                                 : "Failed to sign in with Google"
                             );
+                          } else if (success) {
+                            // Explicitly navigate to dashboard after successful Google login
+                            router.replace("/(tabs)/dashboard");
                           }
                         } catch (error: any) {
                           setErrorMsg("An error occurred with Google sign in");
@@ -200,6 +204,9 @@ export default function LoginPage() {
                                 ? error
                                 : "Failed to sign in with Apple"
                             );
+                          } else if (success) {
+                            // Explicitly navigate to dashboard after successful Apple login
+                            router.replace("/(tabs)/dashboard");
                           }
                         } catch (error: any) {
                           setErrorMsg("An error occurred with Apple sign in");

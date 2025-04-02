@@ -1,35 +1,59 @@
-import React from 'react'
-import { Tabs } from 'expo-router'
-import { Image, Platform, View } from 'react-native'
+import React, { useEffect } from "react";
+import { Tabs, useRouter } from "expo-router";
+import { Image, Platform, View } from "react-native";
+import { useAuth } from "../../contexts/AuthContext";
 
 const _Layout = () => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  // Protect all tab routes - redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      // User is not authenticated, redirect to login
+      router.replace("/(auth)/login");
+    }
+  }, [user, loading, router]);
+
+  // Don't render anything while checking authentication
+  if (loading) {
+    return null;
+  }
+
+  // Only render the tabs if authenticated
+  if (!user) {
+    return null;
+  }
+
   return (
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: '#161616',
+          backgroundColor: "#161616",
           borderTopWidth: 0,
           paddingBottom: 8,
           paddingTop: 8,
-          position: 'absolute',
+          position: "absolute",
           bottom: 40,
-          ...(Platform.OS === 'web' ? {
-            left: '50%',
-            width: '400px',
-            transform: 'translateX(-50%)',
-          } : {
-            left: 20,
-            right: 20,
-          }),
+          ...(Platform.OS === "web"
+            ? {
+                left: "50%",
+                width: "400px",
+                transform: "translateX(-50%)",
+              }
+            : {
+                left: 20,
+                right: 20,
+              }),
           borderRadius: 16,
           height: 64,
           elevation: 0,
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOpacity: 0.1,
           shadowRadius: 24,
           shadowOffset: {
             width: 0,
-            height: 4
+            height: 4,
           },
         },
         tabBarItemStyle: {
@@ -37,29 +61,30 @@ const _Layout = () => {
         },
         tabBarIcon: ({ focused }) => ({
           style: {
-            width: Platform.OS === 'web' ? 40 : 34,
-            height: Platform.OS === 'web' ? 40 : 34,
-          }
+            width: Platform.OS === "web" ? 40 : 34,
+            height: Platform.OS === "web" ? 40 : 34,
+          },
         }),
         tabBarLabel: () => null,
-        tabBarActiveTintColor: '#4A90E2',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: "#4A90E2",
+        tabBarInactiveTintColor: "#9CA3AF",
         headerShown: false,
       }}
     >
       <Tabs.Screen
-        name='dashboard'
+        name="dashboard"
         options={{
           tabBarIcon: ({ focused }) => (
             <>
               <Image
-                source={focused 
-                  ? require('../../assets/images/Hylo Icons v1 (Dark) (Active)/1.png')
-                  : require('../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/1.png')
+                source={
+                  focused
+                    ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/1.png")
+                    : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/1.png")
                 }
                 style={{
-                  width: Platform.OS === 'web' ? 40 : 34,
-                  height: Platform.OS === 'web' ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
@@ -71,18 +96,19 @@ const _Layout = () => {
         }}
       />
       <Tabs.Screen
-        name='continue_course'
+        name="continue_course"
         options={{
           tabBarIcon: ({ focused }) => (
             <>
               <Image
-                source={focused 
-                  ? require('../../assets/images/Hylo Icons v1 (Dark) (Active)/2.png')
-                  : require('../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/2.png')
+                source={
+                  focused
+                    ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/2.png")
+                    : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/2.png")
                 }
                 style={{
-                  width: Platform.OS === 'web' ? 40 : 34,
-                  height: Platform.OS === 'web' ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
@@ -94,18 +120,19 @@ const _Layout = () => {
         }}
       />
       <Tabs.Screen
-        name='chat'
+        name="chat"
         options={{
           tabBarIcon: ({ focused }) => (
             <>
               <Image
-                source={focused 
-                  ? require('../../assets/images/Hylo Icons v1 (Dark) (Active)/3.png')
-                  : require('../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/3.png')
+                source={
+                  focused
+                    ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/3.png")
+                    : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/3.png")
                 }
                 style={{
-                  width: Platform.OS === 'web' ? 40 : 34,
-                  height: Platform.OS === 'web' ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
@@ -117,18 +144,19 @@ const _Layout = () => {
         }}
       />
       <Tabs.Screen
-        name='search'
+        name="search"
         options={{
           tabBarIcon: ({ focused }) => (
             <>
               <Image
-                source={focused 
-                  ? require('../../assets/images/Hylo Icons v1 (Dark) (Active)/4.png')
-                  : require('../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/4.png')
+                source={
+                  focused
+                    ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/4.png")
+                    : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/4.png")
                 }
                 style={{
-                  width: Platform.OS === 'web' ? 40 : 34,
-                  height: Platform.OS === 'web' ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
@@ -140,18 +168,19 @@ const _Layout = () => {
         }}
       />
       <Tabs.Screen
-        name='my_courses'
+        name="my_courses"
         options={{
           tabBarIcon: ({ focused }) => (
             <>
               <Image
-                source={focused 
-                  ? require('../../assets/images/Hylo Icons v1 (Dark) (Active)/5.png')
-                  : require('../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/5.png')
+                source={
+                  focused
+                    ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/5.png")
+                    : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/5.png")
                 }
                 style={{
-                  width: Platform.OS === 'web' ? 40 : 34,
-                  height: Platform.OS === 'web' ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
@@ -163,7 +192,7 @@ const _Layout = () => {
         }}
       />
     </Tabs>
-  )
-}
+  );
+};
 
-export default _Layout
+export default _Layout;

@@ -67,6 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     name: string
   ) => {
     try {
+      // First, ensure username is included in the user metadata
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -82,7 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { error };
       }
 
-      // Create a user profile in the profiles table
+      // Create a user profile in the profiles table with the username
       if (data.user) {
         const { error: profileError } = await supabase.from("profiles").insert([
           {
@@ -94,12 +95,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ]);
 
         if (profileError) {
+          console.error("Error creating profile:", profileError);
           return { error: profileError };
         }
+
+        console.log("Profile created successfully with username:", username);
       }
 
       return { error: null };
     } catch (error) {
+      console.error("Signup error:", error);
       return { error };
     }
   };

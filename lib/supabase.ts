@@ -4,24 +4,35 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
 // SecureStore is not available on web, so we need to use localStorage
+// Also need to handle Node.js environments where localStorage doesn't exist
 const ExpoSecureStoreAdapter = {
   getItem: async (key: string): Promise<string | null> => {
     if (Platform.OS === "web") {
-      const value = localStorage.getItem(key);
-      return value;
+      // Check if we're in a browser environment where localStorage exists
+      if (typeof window !== "undefined" && window.localStorage) {
+        return window.localStorage.getItem(key);
+      }
+      // Return null for server-side rendering or environments without localStorage
+      return null;
     }
     return SecureStore.getItemAsync(key);
   },
   setItem: async (key: string, value: string): Promise<void> => {
     if (Platform.OS === "web") {
-      localStorage.setItem(key, value);
+      // Check if we're in a browser environment where localStorage exists
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
       return;
     }
     return SecureStore.setItemAsync(key, value);
   },
   removeItem: async (key: string): Promise<void> => {
     if (Platform.OS === "web") {
-      localStorage.removeItem(key);
+      // Check if we're in a browser environment where localStorage exists
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.removeItem(key);
+      }
       return;
     }
     return SecureStore.deleteItemAsync(key);
@@ -30,9 +41,11 @@ const ExpoSecureStoreAdapter = {
 
 // Initialize Supabase with your project URL and anon key from environment variables
 const supabaseUrl =
-  Constants.expoConfig?.extra?.supabaseUrl || process.env.SUPABASE_URL;
+  Constants.expoConfig?.extra?.supabaseUrl ||
+  process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey =
-  Constants.expoConfig?.extra?.supabaseAnonKey || process.env.SUPABASE_ANON_KEY;
+  Constants.expoConfig?.extra?.supabaseAnonKey ||
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 // Ensure the environment variables are set
 if (!supabaseUrl || !supabaseAnonKey) {

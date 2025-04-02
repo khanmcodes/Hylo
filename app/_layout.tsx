@@ -53,11 +53,13 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="courses/[id]" options={{ headerShown: false }} />
-        {isAuthenticated ? (
-          <Redirect href="/(tabs)/dashboard" />
-        ) : (
+        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
+        {/* Only redirect if we've determined authentication status */}
+        {isAuthenticated === false ? (
           <Redirect href="/(auth)/welcome" />
-        )}
+        ) : isAuthenticated === true ? (
+          <Redirect href="/(tabs)/dashboard" />
+        ) : null}
       </Stack>
     </AuthProvider>
   );
