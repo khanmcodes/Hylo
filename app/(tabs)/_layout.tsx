@@ -28,43 +28,53 @@ const _Layout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor: "#161616",
-          borderTopWidth: 0,
-          paddingBottom: 8,
-          paddingTop: 8,
-          position: "absolute",
-          bottom: 40,
-          ...(Platform.OS === "web"
-            ? {
-                left: "50%",
-                width: "400px",
-                transform: "translateX(-50%)",
-              }
-            : {
-                left: 20,
-                right: 20,
-              }),
-          borderRadius: 16,
-          height: 64,
-          elevation: 0,
-          shadowColor: "#000",
-          shadowOpacity: 0.1,
-          shadowRadius: 24,
-          shadowOffset: {
-            width: 0,
-            height: 4,
+        tabBarStyle: Platform.select({
+          web: {
+            backgroundColor: "#161616",
+            borderTopWidth: 0,
+            paddingBottom: 8,
+            paddingTop: 8,
+            position: "absolute",
+            bottom: 40,
+            left: "50%",
+            width: 400,
+            transform: "translateX(-50%)",
+            borderRadius: 16,
+            height: 64,
+            elevation: 0,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 24,
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
           },
-        },
+          default: {
+            backgroundColor: "#161616",
+            borderTopWidth: 0,
+            paddingBottom: 8,
+            paddingTop: 8,
+            position: "absolute",
+            bottom: 40,
+            left: 20,
+            right: 20,
+            borderRadius: 16,
+            height: 64,
+            elevation: 0,
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 24,
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+          },
+        }),
         tabBarItemStyle: {
           paddingBottom: 6,
         },
-        tabBarIcon: ({ focused }) => ({
-          style: {
-            width: Platform.OS === "web" ? 40 : 34,
-            height: Platform.OS === "web" ? 40 : 34,
-          },
-        }),
+        tabBarIcon: ({ focused }) => null,
         tabBarLabel: () => null,
         tabBarActiveTintColor: "#4A90E2",
         tabBarInactiveTintColor: "#9CA3AF",
