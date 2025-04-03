@@ -84,7 +84,7 @@ export default function LoginPage() {
                 <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3 lg:mb-0">
                   <Feather name="mail" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-4 lg:py-3 mx-3"
+                    className="flex-1 bg-dark-200 text-white sm:text-base px-3 py-4 lg:py-3 mx-3"
                     placeholder="Enter your email"
                     placeholderTextColor="#9CA3AF"
                     value={email}
@@ -98,7 +98,7 @@ export default function LoginPage() {
                 <View className="flex-row items-center bg-dark-200 rounded-full px-4">
                   <Feather name="key" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 text-white sm:text-lg px-3 py-4 lg:py-3 mx-3"
+                    className="flex-1 text-white sm:text-base px-3 py-4 lg:py-3 mx-3"
                     placeholder="Enter your password"
                     placeholderTextColor="#9CA3AF"
                     value={password}
@@ -118,7 +118,7 @@ export default function LoginPage() {
 
                 {/* Error Message */}
                 {errorMsg ? (
-                  <Text className="text-red-500 text-sm mt-2 text-center">
+                  <Text className="text-red-500 text-sm mt-2 text-center font-sans">
                     {errorMsg}
                   </Text>
                 ) : null}
@@ -132,19 +132,19 @@ export default function LoginPage() {
                   disabled={loading}
                 >
                   {" "}
-                  <Text className="text-white text-center text-base sm:text-lg md:text-xl font-semibold">
+                  <Text className="text-white text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
                     {loading ? "Logging in..." : "Login"}
                   </Text>
                 </TouchableOpacity>
 
                 {/* Sign Up Link */}
                 <View className="flex-row justify-center lg:justify-start mt-6">
-                  <Text className="text-gray-300 text-sm sm:text-base">
+                  <Text className="text-gray-300 text-sm sm:text-base font-sans mt-3">
                     Don't have an account?{" "}
                   </Text>
                   <Link href="/(auth)/signup" asChild>
                     <TouchableOpacity>
-                      <Text className="text-primary font-semibold text-sm sm:text-base">
+                      <Text className="text-primary font-semibold text-sm sm:text-base font-sans mt-3">
                         Sign Up
                       </Text>
                     </TouchableOpacity>
@@ -153,13 +153,13 @@ export default function LoginPage() {
 
                 {/* Social Login */}
                 <View className="mt-6">
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center mt-3">
                     <View className="flex-1 h-[1px] bg-gray-700" />
-                    <Text className="text-gray-400 mx-4">or continue with</Text>
+                    <Text className="text-gray-400 mx-4 font-sans">or continue with</Text>
                     <View className="flex-1 h-[1px] bg-gray-700" />
                   </View>
 
-                  <View className="flex-row justify-center space-x-4 mt-4">
+                  <View className="flex-row justify-center space-x-4 mt-5">
                     <TouchableOpacity
                       className="w-12 h-12 lg:w-10 lg:h-10 bg-dark-200 rounded-full items-center justify-center"
                       onPress={async () => {

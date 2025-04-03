@@ -5,7 +5,7 @@ const search = () => {
   return (
     
     <View className="flex-1 justify-center items-center bg-dark-300" >
-      <Text className="text-2xl font-medium text-primary">Search</Text>
+      <Text className="text-2xl font-medium text-primary font-sans">Search</Text>
     </View>
   )
 }

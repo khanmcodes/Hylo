@@ -104,7 +104,7 @@ export default function SignUpPage() {
                 <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3 md:mb-0">
                   <Feather name="user" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-5 lg:py-3 mx-3"
+                    className="flex-1 text-white sm:text-base px-3 py-4 lg:py-3 mx-3 font-sans"
                     placeholder="Enter your full name"
                     placeholderTextColor="#9CA3AF"
                     value={name}
@@ -117,7 +117,7 @@ export default function SignUpPage() {
                 <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3">
                   <Feather name="at-sign" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-5 lg:py-3 mx-3"
+                    className="flex-1 bg-dark-200 text-white sm:text-base px-3 py-4 lg:py-3 mx-3 font-sans"
                     placeholder="Create a username"
                     placeholderTextColor="#9CA3AF"
                     value={username}
@@ -130,7 +130,7 @@ export default function SignUpPage() {
                 <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3">
                   <Feather name="mail" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-5 lg:py-3 mx-3"
+                    className="flex-1 bg-dark-200 text-white sm:text-base px-3 py-4 lg:py-3 mx-3 font-sans"
                     placeholder="Enter your email"
                     placeholderTextColor="#9CA3AF"
                     value={email}
@@ -144,7 +144,7 @@ export default function SignUpPage() {
                 <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3">
                   <Feather name="lock" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-5 lg:py-3  mx-3"
+                    className="flex-1 text-white sm:text-sm px-3 py-4 lg:py-3 mx-3 font-sans"
                     placeholder="Create a password"
                     placeholderTextColor="#9CA3AF"
                     value={password}
@@ -163,10 +163,10 @@ export default function SignUpPage() {
                 </View>
 
                 {/* Confirm Password Input */}
-                <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3 ">
+                <View className="flex-row items-center bg-dark-200 rounded-full px-4 mb-3 lg:mb-0">
                   <Feather name="lock" size={20} color="#9CA3AF" />
                   <TextInput
-                    className="flex-1 bg-dark-200 text-white sm:text-lg px-3 py-5 lg:py-3 mx-3"
+                    className="flex-1 text-white sm:text-sm px-3 py-4 lg:py-3 mx-3 font-sans"
                     placeholder="Confirm your password"
                     placeholderTextColor="#9CA3AF"
                     value={confirmPassword}
@@ -186,7 +186,7 @@ export default function SignUpPage() {
 
                 {/* Error Message */}
                 {errorMsg ? (
-                  <Text className="text-red-500 text-sm mt-2 text-center">
+                  <Text className="text-red-500 text-sm mt-2 text-center font-sans">
                     {errorMsg}
                   </Text>
                 ) : null}
@@ -199,19 +199,19 @@ export default function SignUpPage() {
                   onPress={handleSignUp}
                   disabled={loading}
                 >
-                  <Text className="text-white text-center text-base sm:text-lg md:text-xl font-semibold">
+                  <Text className="text-white text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
                     {loading ? "Creating Account..." : "Sign Up"}
                   </Text>
                 </TouchableOpacity>
 
                 {/* Login Link */}
                 <View className="flex-row justify-center lg:justify-start mt-4">
-                  <Text className="text-gray-300 text-sm sm:text-base">
+                  <Text className="text-gray-300 text-sm sm:text-base font-sans lg:mt-4">
                     Already have an account?{" "}
                   </Text>
                   <Link href="/(auth)/login" asChild>
                     <TouchableOpacity>
-                      <Text className="text-primary font-semibold text-sm sm:text-base">
+                      <Text className="text-primary font-semibold text-sm sm:text-base font-sans lg:mt-4">
                         Login
                       </Text>
                     </TouchableOpacity>
@@ -219,13 +219,13 @@ export default function SignUpPage() {
                 </View>
                 {/* Social Login */}
                 <View className="mt-6">
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center lg:mt-4">
                     <View className="flex-1 h-[1px] bg-gray-700" />
-                    <Text className="text-gray-400 mx-4">or continue with</Text>
+                    <Text className="text-gray-400 mx-4 font-sans">or continue with</Text>
                     <View className="flex-1 h-[1px] bg-gray-700" />
                   </View>
 
-                  <View className="flex-row justify-center space-x-4 mt-4">
+                  <View className="flex-row justify-center space-x-4 mt-6">
                     <TouchableOpacity
                       className="w-12 h-12 lg:w-10 lg:h-10 bg-dark-200 rounded-full items-center justify-center"
                       onPress={async () => {

@@ -11,6 +11,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
+    "Inter": require("../assets/fonts/Inter.ttf"),
+    "Patrick Hand": require("../assets/fonts/PatrickHand.ttf"),
     "Gochi Hand": require("../assets/fonts/GochiHand-Regular.ttf"),
   });
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);

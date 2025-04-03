@@ -5,7 +5,7 @@ const chat = () => {
   return (
     
     <View className="flex-1 justify-center items-center bg-dark-300" >
-      <Text className="text-2xl font-medium text-primary">Hylo Chatbot</Text>
+      <Text className="text-2xl font-medium text-primary font-sans">Hylo Chatbot</Text>
     </View>
   )
 }

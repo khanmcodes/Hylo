@@ -38,7 +38,7 @@ export default function WelcomePage() {
               <View className="space-y-6 sm:space-y-4">
                 <Link href="/login" asChild>
                   <TouchableOpacity className="bg-primary py-4 rounded-full">
-                    <Text className="text-white text-center text-base sm:text-lg md:text-xl font-semibold">
+                    <Text className="text-white text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
                       Login
                     </Text>
                   </TouchableOpacity>
@@ -46,7 +46,7 @@ export default function WelcomePage() {
                 
                 <Link href="/signup" asChild>
                   <TouchableOpacity className="bg-dark-200 py-4 rounded-full border border-primary mt-4">
-                    <Text className="text-primary text-center text-base sm:text-lg md:text-xl font-semibold">
+                    <Text className="text-primary text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
                       Sign Up
                     </Text>
                   </TouchableOpacity>

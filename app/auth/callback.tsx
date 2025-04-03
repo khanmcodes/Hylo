@@ -36,7 +36,7 @@ export default function AuthCallback() {
 
   return (
     <View className="flex-1 items-center justify-center bg-black">
-      <Text className="text-white text-lg">Completing login...</Text>
+      <Text className="text-white text-lg font-sans">Completing login...</Text>
     </View>
   );
 }
