@@ -22,6 +22,9 @@ const MyCourses = () => {
     { emoji: '🌍', title: 'Explore Courses', color: ['#22C55E', '#1e1e1e'] as [string, string], desc: 'Browse free and paid courses created by expert educators. Learn at your own pace and earn certifications.', btn: 'Explore Now' },
   ];
 
+  const inProgressCourses = []; // Replace with actual data
+  const enrolledCourses = []; // Replace with actual data
+
   const handleFilePick = async () => {
     try {
       const results = await DocumentPicker.getDocumentAsync({ multiple: true });
@@ -87,18 +90,35 @@ const MyCourses = () => {
         ))}
       </View>
 
-      {/* Sections */}
+      {/* In Progress Section */}
       <View className="mt-8 mx-64">
-        <InterText className="text-xl font-semibold text-white">In Progress</InterText>
+        <InterText className="text-lg font-semibold text-white">
+          In Progress <InterText className="text-gray-400 font-regular">{inProgressCourses.length}</InterText>
+        </InterText>
         <View className="justify-center items-center">
-          <InterText className="text-gray-400">Ongoing courses will appear here.</InterText>
+          {inProgressCourses.length === 0 ? (
+            <InterText className="text-gray-400">Ongoing courses will appear here.</InterText>
+          ) : (
+            // Render course card components here
+            // Example: inProgressCourses.map(course => <CourseCard key={course.id} course={course} />)
+            <InterText className="text-gray-400">Course cards will be rendered here.</InterText>
+          )}
         </View>
       </View>
 
+      {/* Enrolled Section */}
       <View className="mt-16 mx-64">
-        <InterText className="text-xl font-semibold text-white">Enrolled</InterText>
+        <InterText className="text-lg font-semibold text-white">
+          Enrolled <InterText className="text-gray-400 font-regular">{enrolledCourses.length}</InterText>
+        </InterText>
         <View className="justify-center items-center">
-          <InterText className="text-gray-400">Your enrolled courses will appear here.</InterText>
+          {enrolledCourses.length === 0 ? (
+            <InterText className="text-gray-400">Your enrolled courses will appear here.</InterText>
+          ) : (
+            // Render course card components here
+            // Example: enrolledCourses.map(course => <CourseCard key={course.id} course={course} />)
+            <InterText className="text-gray-400">Course cards will be rendered here.</InterText>
+          )}
         </View>
       </View>
 
@@ -107,12 +127,11 @@ const MyCourses = () => {
         <BlurView intensity={30} tint="dark" className="absolute inset-0 flex items-center justify-center">
           <View className="bg-dark-200 p-6 rounded-xl w-11/12 max-w-md opacity-100">
             {/* Close Icon */}
-            <View className="flex flex-row justify-between items-center">
-              <Pressable onPress={() => setModalVisible(false)} className="absolute bottom-4 right-2">
-                <Feather name="x" size={24} color="white" />
-              </Pressable>
-              <InterText className="text-xl font-semibold text-white mb-4">Create a Course</InterText>
-            </View>
+            <Pressable onPress={() => setModalVisible(false)} className="absolute top-4 right-4">
+              <Feather name="x" size={24} color="white" />
+            </Pressable>
+
+            <InterText className="text-xl font-semibold text-white mb-4">Create a Course</InterText>
 
             <View className="h-[1px] bg-gray-700" />
             {/* Course Type Selection */}
