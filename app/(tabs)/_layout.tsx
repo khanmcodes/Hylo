@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect } from "react";
 import { Tabs, useRouter } from "expo-router";
-import { Image, Platform, View, TouchableOpacity, Animated, Text } from "react-native";
+import { Image, Platform, View } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 
 const _Layout = () => {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [menuVisible, setMenuVisible] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   // Protect all tab routes - redirect to login if not authenticated
   useEffect(() => {
@@ -26,22 +24,8 @@ const _Layout = () => {
   if (!user) {
     return null;
   }
-
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-    Animated.timing(fadeAnim, {
-      toValue: menuVisible ? 0 : 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleLogout = () => {
-    // Add your logout logic here
-    console.log("Logout clicked");
-  };
-
   return (
+
     <Tabs
       screenOptions={{
         tabBarStyle: Platform.select({

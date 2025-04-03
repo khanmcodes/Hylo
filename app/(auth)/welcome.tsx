@@ -32,9 +32,9 @@ export default function WelcomePage() {
                 className="w-[180px] sm:w-[320px] md:w-[400px] lg:w-[580px] h-[119px] sm:h-[136px] md:h-[170px] lg:h-[304px] sm:mb-8 md:mb-10"
                 resizeMode="contain"
               />
-              <InterText className='text-white sm:text-lg md:text-2xl font-gochi-hand text-center'>
+              <Text className='text-white sm:text-lg md:text-2xl font-gochi-hand text-center'>
                 Made by students, for students
-              </InterText>
+              </Text>
             </View>
 
             {/* Buttons Section */}
