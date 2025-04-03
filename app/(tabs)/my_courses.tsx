@@ -1,13 +1,16 @@
-import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Pressable, TouchableWithoutFeedback } from 'react-native';
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as DocumentPicker from 'expo-document-picker';
 import InterText from '../../components/InterText';
+import Feather from 'react-native-vector-icons/Feather';
+import { DocumentPickerAsset } from 'expo-document-picker';
+import { useDropzone } from 'react-dropzone';
 
 const MyCourses = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [file, setFile] = useState<DocumentPicker.DocumentPickerResult | null>(null);
+  const [files, setFiles] = useState<DocumentPickerAsset[]>([]);
   const [fileType, setFileType] = useState('');
   const [mode, setMode] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -21,24 +24,39 @@ const MyCourses = () => {
 
   const handleFilePick = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync();
-      if (result.canceled === false) {
-        setFile(result);
+      const results = await DocumentPicker.getDocumentAsync({ multiple: true });
+      if (results.canceled === false) {
+        setFiles(prevFiles => [...prevFiles, ...results.assets]);
       }
     } catch (error) {
-      console.log('Error picking file: ', error);
+      console.log('Error picking files: ', error);
     }
   };
+
+  const onDrop = (acceptedFiles: File[]) => {
+    const fileArray: DocumentPickerAsset[] = acceptedFiles.map(file => ({
+      name: file.name,
+      type: file.type,
+      uri: '', // Set to an empty string or handle as needed
+    }));
+    setFiles(prevFiles => [...prevFiles, ...fileArray]);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleUpload = () => {
     setIsUploading(true);
     // Simulate file upload (replace with actual upload logic)
     setTimeout(() => {
       setIsUploading(false);
-      alert('File uploaded successfully!');
+      alert('Files uploaded successfully!');
       setModalVisible(false);
+      setFiles([]);
     }, 2000);
   };
+
+  // Check if the upload button should be enabled
+  const isUploadEnabled = fileType !== '' && mode !== '' && files.length > 0;
 
   return (
     <View className="flex-1 bg-dark-300 px-24 py-10">
@@ -50,9 +68,9 @@ const MyCourses = () => {
           <TouchableOpacity
             key={index}
             className="w-full sm:w-[48%] lg:w-[18%] p-4 rounded-xl "
-            onPress={course.action || (() => {})}
+            onPress={course.action || (() => { })}
           >
-            <LinearGradient 
+            <LinearGradient
               colors={course.color}
               locations={[0, 0.5, 0.5, 0]}  // First color fades at 50%, second starts from 50%
               start={{ x: 0.5, y: 0 }}
@@ -72,9 +90,9 @@ const MyCourses = () => {
       {/* Sections */}
       <View className="mt-8 mx-64">
         <InterText className="text-xl font-semibold text-white">In Progress</InterText>
-          <View className="justify-center items-center">
+        <View className="justify-center items-center">
           <InterText className="text-gray-400">Ongoing courses will appear here.</InterText>
-          </View>
+        </View>
       </View>
 
       <View className="mt-16 mx-64">
@@ -88,59 +106,85 @@ const MyCourses = () => {
       <Modal visible={modalVisible} transparent animationType="fade">
         <BlurView intensity={30} tint="dark" className="absolute inset-0 flex items-center justify-center">
           <View className="bg-dark-200 p-6 rounded-xl w-11/12 max-w-md opacity-100">
-            <InterText className="text-xl font-semibold text-primary mb-4">Create a Course</InterText>
+            {/* Close Icon */}
+            <View className="flex flex-row justify-between items-center">
+              <Pressable onPress={() => setModalVisible(false)} className="absolute bottom-4 right-2">
+                <Feather name="x" size={24} color="white" />
+              </Pressable>
+              <InterText className="text-xl font-semibold text-white mb-4">Create a Course</InterText>
+            </View>
 
+            <View className="h-[1px] bg-gray-700" />
             {/* Course Type Selection */}
-            <InterText className="text-white mb-2">Choose what you are uploading:</InterText>
-            <TouchableOpacity
-              onPress={() => setFileType('outline')}
-              className={`p-3 rounded-md mb-2 ${fileType === 'outline' ? 'bg-blue-600' : 'bg-dark-500'}`}
-            >
-              <InterText className="text-white">📄 Course Outline</InterText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setFileType('material')}
-              className={`p-3 rounded-md mb-2 ${fileType === 'material' ? 'bg-blue-600' : 'bg-dark-500'}`}
-            >
-              <InterText className="text-white">📚 Course Material</InterText>
-            </TouchableOpacity>
+            <InterText className="text-white mb-2 mt-4">Choose what you are uploading:</InterText>
+            <View className="flex flex-row justify-around mb-4 mt-4">
+              <TouchableOpacity
+                onPress={() => setFileType('outline')}
+                className={`py-3 px-5 border border-gray-700 rounded-full ${fileType === 'outline' ? 'bg-primary' : 'bg-dark-500'}`}
+              >
+                <InterText className="text-white">📄 Course Outline</InterText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setFileType('material')}
+                className={`py-3 px-5 border border-gray-700 rounded-full ${fileType === 'material' ? 'bg-primary' : 'bg-dark-500'}`}
+              >
+                <InterText className="text-white">📚 Course Material</InterText>
+              </TouchableOpacity>
+            </View>
 
+            <View className="h-[1px] bg-gray-700" />
             {/* Mode Selection */}
             <InterText className="text-white mt-4 mb-2">Select Mode:</InterText>
-            <TouchableOpacity
-              onPress={() => setMode('podcast')}
-              className={`p-3 rounded-md mb-2 ${mode === 'podcast' ? 'bg-blue-600' : 'bg-dark-500'}`}
-            >
-              <InterText className="text-white">🎙️ Hylo Podcast Mode</InterText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setMode('notes')}
-              className={`p-3 rounded-md mb-2 ${mode === 'notes' ? 'bg-blue-600' : 'bg-dark-500'}`}
-            >
-              <InterText className="text-white">📖 Study Notes</InterText>
-            </TouchableOpacity>
+            <View className="flex flex-row justify-around mb-4 mt-4">
+              <TouchableOpacity
+                onPress={() => setMode('podcast')}
+                className={`py-3 px-5 border border-gray-700 rounded-full ${mode === 'podcast' ? 'bg-primary' : 'bg-dark-500'}`}
+              >
+                <InterText className="text-white">🎙️ Hylo Podcast Mode</InterText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setMode('notes')}
+                className={`py-3 px-5 border border-gray-700 rounded-full ${mode === 'notes' ? 'bg-primary' : 'bg-dark-500'}`}
+              >
+                <InterText className="text-white">📖 Study Notes</InterText>
+              </TouchableOpacity>
+            </View>
 
+            <View className="h-[1px] bg-gray-700" />
             {/* File Upload */}
             <InterText className="text-white mt-4 mb-2">Upload File:</InterText>
             <Pressable
               onPress={handleFilePick}
-              className={`p-3 bg-dark-500 rounded-md mb-4 ${file ? 'bg-green-600' : ''}`}
+              className={`p-3 bg-dark-500 rounded-md mb-4 mt-4 ${files.length > 0 ? 'bg-green-600' : ''}`}
             >
-              <InterText className="text-white">{file && file.assets ? `📁 ${file.assets[0].name}` : '📤 Select File'}</InterText>
+              <InterText className="text-white">{files.length > 0 ? `📁 ${files.map(file => file.name).join(', ')}` : 'No Files Selected'}</InterText>
             </Pressable>
 
-            {/* Upload Button */}
-            {isUploading ? (
-              <InterText className="text-white text-center mb-4">Uploading...</InterText>
-            ) : (
-              <Pressable className="p-3 bg-blue-600 rounded-md" onPress={handleUpload}>
-                <InterText className="text-white text-center">Upload</InterText>
-              </Pressable>
-            )}
+            {/* Dashed Box for Drag and Drop Uploading */}
+            <div {...getRootProps()} className="border-dashed border-2 border-gray-400 rounded-lg p-4 mb-4">
+              <input {...getInputProps()} />
+              <InterText className="text-gray-400 text-center">Drag and drop your files here</InterText>
+              {/* Preview Section */}
+              {files.length > 0 && (
+                <View className="flex items-center justify-between mt-2">
+                  {files.map((file, index) => (
+                    <View key={index} className="flex-row items-center justify-between w-full">
+                      <InterText className="text-white text-center">{file.name}</InterText>
+                      <Pressable onPress={() => setFiles(prev => prev.filter((_, i) => i !== index))}>
+                        <Feather name="x" size={20} color="red" />
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </div>
 
-            {/* Close Modal */}
-            <Pressable className="p-3 bg-red-500 rounded-md mt-4" onPress={() => setModalVisible(false)}>
-              <InterText className="text-white text-center">Close</InterText>
+            <Pressable
+              className={`px-6 py-1.5 bg-primary w-fit self-center rounded-full mt-5 ${isUploadEnabled ? '' : 'opacity-50'}`}
+              onPress={isUploadEnabled ? handleUpload : undefined}
+              disabled={!isUploadEnabled}
+            >
+              <InterText className="text-white text-base text-center">Create Course</InterText>
             </Pressable>
           </View>
         </BlurView>
