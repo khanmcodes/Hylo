@@ -1,4 +1,6 @@
-import { Text, View } from "react-native";
+import { View } from 'react-native';
+import React from 'react';
+import InterText from '../../components/InterText';
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function Dashboard() {
@@ -7,10 +9,7 @@ export default function Dashboard() {
 
   return (
     <View className="flex-1 justify-center items-center bg-dark-300">
-      <Text className="text-2xl font-medium text-primary font-sans">
-        {" "}
-        Welcome To Dashboard {username}
-      </Text>
+      <InterText className="text-2xl font-medium text-primary">Welcome To Dashboard {username}</InterText>
     </View>
   );
 }

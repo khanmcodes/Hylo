@@ -12,6 +12,7 @@ import { Link, router } from "expo-router";
 import { useState } from "react";
 import Feather from "react-native-vector-icons/Feather";
 import { useAuth } from "../../contexts/AuthContext";
+import InterText from '../../components/InterText';
 
 export default function SignUpPage() {
   const [name, setName] = useState("");
@@ -92,9 +93,9 @@ export default function SignUpPage() {
                 className="w-[180px] sm:w-[320px] md:w-[400px] lg:w-[580px] h-[119px] sm:h-[136px] md:h-[170px] lg:h-[304px] sm:mb-8 md:mb-10"
                 resizeMode="contain"
               />
-              <Text className="text-white sm:text-lg md:text-2xl font-gochi-hand text-center">
+              <InterText className="text-white sm:text-lg md:text-2xl font-gochi-hand text-center">
                 Join Our Learning Community
-              </Text>
+              </InterText>
             </View>
 
             {/* Form Section */}
@@ -186,9 +187,9 @@ export default function SignUpPage() {
 
                 {/* Error Message */}
                 {errorMsg ? (
-                  <Text className="text-red-500 text-sm mt-2 text-center font-sans">
+                  <InterText className="text-red-500 text-sm mt-2 text-center">
                     {errorMsg}
-                  </Text>
+                  </InterText>
                 ) : null}
 
                 {/* Sign Up Button */}
@@ -199,21 +200,21 @@ export default function SignUpPage() {
                   onPress={handleSignUp}
                   disabled={loading}
                 >
-                  <Text className="text-white text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
+                  <InterText className="text-white text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
                     {loading ? "Creating Account..." : "Sign Up"}
-                  </Text>
+                  </InterText>
                 </TouchableOpacity>
 
                 {/* Login Link */}
                 <View className="flex-row justify-center lg:justify-start mt-4">
-                  <Text className="text-gray-300 text-sm sm:text-base font-sans lg:mt-4">
+                  <InterText className="text-gray-300 text-sm sm:text-base font-sans lg:mt-4">
                     Already have an account?{" "}
-                  </Text>
+                  </InterText>
                   <Link href="/(auth)/login" asChild>
                     <TouchableOpacity>
-                      <Text className="text-primary font-semibold text-sm sm:text-base font-sans lg:mt-4">
+                      <InterText className="text-primary font-semibold text-sm sm:text-base font-sans lg:mt-4">
                         Login
-                      </Text>
+                      </InterText>
                     </TouchableOpacity>
                   </Link>
                 </View>
@@ -221,7 +222,7 @@ export default function SignUpPage() {
                 <View className="mt-6">
                   <View className="flex-row items-center lg:mt-4">
                     <View className="flex-1 h-[1px] bg-gray-700" />
-                    <Text className="text-gray-400 mx-4 font-sans">or continue with</Text>
+                    <InterText className="text-gray-400 mx-4 font-sans">or continue with</InterText>
                     <View className="flex-1 h-[1px] bg-gray-700" />
                   </View>
 

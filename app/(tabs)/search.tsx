@@ -1,11 +1,12 @@
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
+import InterText from '../../components/InterText'
 
 const search = () => {
   return (
     
     <View className="flex-1 justify-center items-center bg-dark-300" >
-      <Text className="text-2xl font-medium text-primary font-sans">Search</Text>
+      <InterText className="text-2xl font-medium text-primary">Search</InterText>
     </View>
   )
 }

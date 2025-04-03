@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
+import InterText from '../../components/InterText';
 
 // This component handles the redirect from OAuth providers
 export default function AuthCallback() {
@@ -36,7 +37,7 @@ export default function AuthCallback() {
 
   return (
     <View className="flex-1 items-center justify-center bg-black">
-      <Text className="text-white text-lg font-sans">Completing login...</Text>
+      <InterText className="text-white text-lg">Completing login...</InterText>
     </View>
   );
 }

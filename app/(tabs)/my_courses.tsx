@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import * as DocumentPicker from 'expo-document-picker';
+import InterText from '../../components/InterText';
 
 const MyCourses = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<DocumentPicker.DocumentPickerResult | null>(null);
   const [fileType, setFileType] = useState('');
   const [mode, setMode] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -21,7 +22,7 @@ const MyCourses = () => {
   const handleFilePick = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync();
-      if (result.type === 'success') {
+      if (result.canceled === false) {
         setFile(result);
       }
     } catch (error) {
@@ -41,7 +42,7 @@ const MyCourses = () => {
 
   return (
     <View className="flex-1 bg-dark-300 px-24 py-10">
-      <Text className="text-2xl font-medium text-white text-center mb-4 font-sans">My Courses</Text>
+      <InterText className="text-2xl font-medium text-white text-center mb-4">My Courses</InterText>
 
       {/* Cards Grid */}
       <View className="flex flex-wrap flex-row justify-center gap-2">
@@ -57,11 +58,11 @@ const MyCourses = () => {
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
               className="p-6 rounded-xl items-center">
-              <Text className="text-2xl text-white font-sans">{course.emoji}</Text>
-              <Text className="text-2xl font-regular text-white font-sans">{course.title}</Text>
-              <Text className="text-xs text-center text-gray-400 mt-2 font-medium font-sans">{course.desc}</Text>
-              <Pressable className="px-6 py-2 bg-primary rounded-full mt-5" onPress={course.action}>
-                <Text className="text-white text-center text-base font-regular font-sans">{course.btn}</Text>
+              <InterText className="text-2xl text-white">{course.emoji}</InterText>
+              <InterText className="text-2xl font-regular text-white">{course.title}</InterText>
+              <InterText className="text-xs text-center text-gray-400 mt-2 font-medium">{course.desc}</InterText>
+              <Pressable className="px-6 py-1 bg-primary rounded-full mt-5" onPress={course.action}>
+                <InterText className="text-white text-center text-base font-regular">{course.btn}</InterText>
               </Pressable>
             </LinearGradient>
           </TouchableOpacity>
@@ -70,16 +71,16 @@ const MyCourses = () => {
 
       {/* Sections */}
       <View className="mt-8 mx-64">
-        <Text className="text-xl font-semibold text-white font-sans">In Progress</Text>
+        <InterText className="text-xl font-semibold text-white">In Progress</InterText>
           <View className="justify-center items-center">
-          <Text className="text-gray-400 font-sans">Ongoing courses will appear here.</Text>
+          <InterText className="text-gray-400">Ongoing courses will appear here.</InterText>
           </View>
       </View>
 
       <View className="mt-16 mx-64">
-        <Text className="text-xl font-semibold text-white font-sans">Enrolled</Text>
+        <InterText className="text-xl font-semibold text-white">Enrolled</InterText>
         <View className="justify-center items-center">
-          <Text className="text-gray-400 font-sans">Your enrolled courses will appear here.</Text>
+          <InterText className="text-gray-400">Your enrolled courses will appear here.</InterText>
         </View>
       </View>
 
@@ -87,59 +88,59 @@ const MyCourses = () => {
       <Modal visible={modalVisible} transparent animationType="fade">
         <BlurView intensity={30} tint="dark" className="absolute inset-0 flex items-center justify-center">
           <View className="bg-dark-200 p-6 rounded-xl w-11/12 max-w-md opacity-100">
-            <Text className="text-xl font-semibold text-primary mb-4 font-sans">Create a Course</Text>
+            <InterText className="text-xl font-semibold text-primary mb-4">Create a Course</InterText>
 
             {/* Course Type Selection */}
-            <Text className="text-white mb-2 font-sans">Choose what you are uploading:</Text>
+            <InterText className="text-white mb-2">Choose what you are uploading:</InterText>
             <TouchableOpacity
               onPress={() => setFileType('outline')}
               className={`p-3 rounded-md mb-2 ${fileType === 'outline' ? 'bg-blue-600' : 'bg-dark-500'}`}
             >
-              <Text className="text-white font-sans">📄 Course Outline</Text>
+              <InterText className="text-white">📄 Course Outline</InterText>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setFileType('material')}
               className={`p-3 rounded-md mb-2 ${fileType === 'material' ? 'bg-blue-600' : 'bg-dark-500'}`}
             >
-              <Text className="text-white font-sans">📚 Course Material</Text>
+              <InterText className="text-white">📚 Course Material</InterText>
             </TouchableOpacity>
 
             {/* Mode Selection */}
-            <Text className="text-white mt-4 mb-2 font-sans">Select Mode:</Text>
+            <InterText className="text-white mt-4 mb-2">Select Mode:</InterText>
             <TouchableOpacity
               onPress={() => setMode('podcast')}
               className={`p-3 rounded-md mb-2 ${mode === 'podcast' ? 'bg-blue-600' : 'bg-dark-500'}`}
             >
-              <Text className="text-white font-sans">🎙️ Hylo Podcast Mode</Text>
+              <InterText className="text-white">🎙️ Hylo Podcast Mode</InterText>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setMode('notes')}
               className={`p-3 rounded-md mb-2 ${mode === 'notes' ? 'bg-blue-600' : 'bg-dark-500'}`}
             >
-              <Text className="text-white font-sans">📖 Study Notes</Text>
+              <InterText className="text-white">📖 Study Notes</InterText>
             </TouchableOpacity>
 
             {/* File Upload */}
-            <Text className="text-white mt-4 mb-2 font-sans">Upload File:</Text>
+            <InterText className="text-white mt-4 mb-2">Upload File:</InterText>
             <Pressable
               onPress={handleFilePick}
               className={`p-3 bg-dark-500 rounded-md mb-4 ${file ? 'bg-green-600' : ''}`}
             >
-              <Text className="text-white font-sans">{file ? `📁 ${file.name}` : '📤 Select File'}</Text>
+              <InterText className="text-white">{file && file.assets ? `📁 ${file.assets[0].name}` : '📤 Select File'}</InterText>
             </Pressable>
 
             {/* Upload Button */}
             {isUploading ? (
-              <Text className="text-white text-center mb-4 font-sans">Uploading...</Text>
+              <InterText className="text-white text-center mb-4">Uploading...</InterText>
             ) : (
               <Pressable className="p-3 bg-blue-600 rounded-md" onPress={handleUpload}>
-                <Text className="text-white text-center font-sans">Upload</Text>
+                <InterText className="text-white text-center">Upload</InterText>
               </Pressable>
             )}
 
             {/* Close Modal */}
             <Pressable className="p-3 bg-red-500 rounded-md mt-4" onPress={() => setModalVisible(false)}>
-              <Text className="text-white text-center font-sans">Close</Text>
+              <InterText className="text-white text-center">Close</InterText>
             </Pressable>
           </View>
         </BlurView>

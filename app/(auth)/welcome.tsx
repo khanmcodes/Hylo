@@ -1,7 +1,11 @@
 import { View, Text, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import React from 'react';
+import InterText from '../../components/InterText';
 
 export default function WelcomePage() {
+  const router = useRouter();
+  
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -28,9 +32,9 @@ export default function WelcomePage() {
                 className="w-[180px] sm:w-[320px] md:w-[400px] lg:w-[580px] h-[119px] sm:h-[136px] md:h-[170px] lg:h-[304px] sm:mb-8 md:mb-10"
                 resizeMode="contain"
               />
-              <Text className='text-white sm:text-lg md:text-2xl font-gochi-hand text-center'>
+              <InterText className='text-white sm:text-lg md:text-2xl font-gochi-hand text-center'>
                 Made by students, for students
-              </Text>
+              </InterText>
             </View>
 
             {/* Buttons Section */}
