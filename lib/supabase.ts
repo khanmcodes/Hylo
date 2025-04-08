@@ -41,20 +41,40 @@ const ExpoSecureStoreAdapter = {
 
 // Initialize Supabase with your project URL and anon key from environment variables
 const supabaseUrl =
-  Constants.expoConfig?.extra?.supabaseUrl ||
-  process.env.EXPO_PUBLIC_SUPABASE_URL;
+  process.env.EXPO_PUBLIC_SUPABASE_URL ||
+  Constants.expoConfig?.extra?.supabaseUrl;
 const supabaseAnonKey =
-  Constants.expoConfig?.extra?.supabaseAnonKey ||
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
+  Constants.expoConfig?.extra?.supabaseAnonKey;
 
-// Ensure the environment variables are set
+// Ensure the environment variables are set and valid
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error(
-    "Supabase URL and Anon Key must be set in environment variables"
+    "Supabase URL and Anon Key must be set in environment variables or app.json"
   );
+  throw new Error("Missing Supabase configuration");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Validate URL before creating client
+let validatedSupabaseUrl = supabaseUrl;
+try {
+  // Test if the URL is valid by creating a URL object
+  if (supabaseUrl) {
+    new URL(supabaseUrl);
+  } else {
+    throw new Error("supabaseUrl is required");
+  }
+} catch (error) {
+  console.error("Invalid Supabase URL:", error);
+  throw new Error("Invalid Supabase URL configuration");
+}
+
+// Ensure we have a valid URL before creating the client
+if (!validatedSupabaseUrl) {
+  throw new Error("supabaseUrl is required");
+}
+
+export const supabase = createClient(validatedSupabaseUrl, supabaseAnonKey, {
   auth: {
     storage: ExpoSecureStoreAdapter,
     autoRefreshToken: true,
