@@ -25,12 +25,11 @@ const _Layout = () => {
     return null;
   }
   return (
-
     <Tabs
       screenOptions={{
         tabBarStyle: Platform.select({
           web: {
-            backgroundColor: "#161616",
+            backgroundColor: 'rgba(22, 22, 22, 0.7)',
             borderTopWidth: 0,
             paddingBottom: 8,
             paddingTop: 8,
@@ -49,9 +48,12 @@ const _Layout = () => {
               width: 0,
               height: 4,
             },
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
           },
           default: {
-            backgroundColor: "#161616",
+            backgroundColor: 'rgba(22, 22, 22, 0.7)',
             borderTopWidth: 0,
             paddingBottom: 8,
             paddingTop: 8,
@@ -69,6 +71,8 @@ const _Layout = () => {
               width: 0,
               height: 4,
             },
+            borderWidth: 1,
+            borderColor: 'rgba(255, 255, 255, 0.1)',
           },
         }),
         tabBarItemStyle: {
@@ -99,7 +103,7 @@ const _Layout = () => {
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
               )}
             </>
           ),
@@ -123,7 +127,7 @@ const _Layout = () => {
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
               )}
             </>
           ),
@@ -147,7 +151,7 @@ const _Layout = () => {
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
               )}
             </>
           ),
@@ -171,7 +175,7 @@ const _Layout = () => {
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
               )}
             </>
           ),
@@ -195,7 +199,7 @@ const _Layout = () => {
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
               )}
             </>
           ),

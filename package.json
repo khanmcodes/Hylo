@@ -20,6 +20,7 @@
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
+    "@supabase/node-fetch": "^2.6.15",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/cli": "^4.1.1",
     "@tailwindcss/vite": "^4.1.1",
