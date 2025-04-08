@@ -23,7 +23,7 @@ export default function WelcomePage() {
           blurRadius={10}
           resizeMode='cover'
         />
-        <View className="w-full min-h-[650px] justify-center max-w-[1200px] bg-transparent lg:bg-[#161616] p-10 sm:p-8 md:p-10">
+        <View className="w-full min-h-[650px] justify-center items-center min-w-[1300px] max-w-[1200px] bg-transparent lg:bg-[#161616] p-10 sm:p-8 md:p-10">
           <View className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
             {/* Logo Section */}
             <View className="w-full lg:w-1/2 flex items-center justify-center">
@@ -38,21 +38,21 @@ export default function WelcomePage() {
             </View>
 
             {/* Buttons Section */}
-            <View className="w-full max-w-[400px] bg-transparent p-6 sm:p-8 md:p-10 rounded-2xl">
+            <View className="w-full min-w-[300px] lg:w-1/2 max-w-[400px] bg-transparent ml-0 sm:ml-14 p-6 sm:p-8 md:p-10 rounded-2xl">
               <View className="space-y-6 sm:space-y-4">
                 <Link href="/login" asChild>
                   <TouchableOpacity className="bg-primary py-4 rounded-full">
-                    <Text className="text-white text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
+                    <InterText className="text-white text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
                       Login
-                    </Text>
+                    </InterText>
                   </TouchableOpacity>
                 </Link>
                 
                 <Link href="/signup" asChild>
                   <TouchableOpacity className="bg-dark-200 py-4 rounded-full border border-primary mt-4">
-                    <Text className="text-primary text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
+                    <InterText className="text-primary text-center text-base sm:text-lg md:text-lg font-semibold font-sans">
                       Sign Up
-                    </Text>
+                    </InterText>
                   </TouchableOpacity>
                 </Link>
               </View>

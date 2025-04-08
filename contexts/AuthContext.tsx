@@ -7,6 +7,7 @@ type AuthContextType = {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  refreshUserData: () => Promise<void>;
   signUp: (
     email: string,
     password: string,
@@ -26,6 +27,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const refreshUserData = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile) {
+          setUser({ ...session.user, user_metadata: profile });
+        } else {
+          setUser(session.user);
+        }
+      }
+    } catch (error) {
+      console.error("Error refreshing user data:", error);
+    }
+  };
+
   useEffect(() => {
     // Check for active session on mount
     const checkSession = async () => {
@@ -34,7 +56,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           data: { session },
         } = await supabase.auth.getSession();
         setSession(session);
-        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", session.user.id)
+            .single();
+
+          if (profile) {
+            setUser({ ...session.user, user_metadata: profile });
+          } else {
+            setUser(session.user);
+          }
+        }
       } catch (error) {
         console.error("Error checking session:", error);
       } finally {
@@ -48,8 +83,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .single();
+
+        if (profile) {
+          setUser({ ...session.user, user_metadata: profile });
+        } else {
+          setUser(session.user);
+        }
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
@@ -137,6 +185,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     session,
     loading,
+    refreshUserData,
     signUp,
     signIn,
     signInWithGoogle,

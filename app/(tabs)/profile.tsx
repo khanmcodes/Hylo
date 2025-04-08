@@ -118,14 +118,14 @@ const uploadImage = async (
 };
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, refreshUserData } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState<ProfileData>({
+  const [profileData, setProfileData] = useState<ProfileData>({
     full_name: "",
     username: "",
     role: "",
-    email: user?.email || "",
+    email: "",
     bio: "",
     avatar_url: "",
     website: "",
@@ -156,7 +156,7 @@ export default function Profile() {
 
       if (data) {
         const userProfile = data as UserProfile;
-        setProfile({
+        setProfileData({
           full_name: userProfile.full_name || "",
           username: userProfile.username || "",
           email: userProfile.email || user?.email || "",
@@ -230,7 +230,7 @@ export default function Profile() {
 
           if (updateError) throw updateError;
 
-          setProfile((prev) => ({ ...prev, avatar_url: publicUrl }));
+          setProfileData((prev) => ({ ...prev, avatar_url: publicUrl }));
           Alert.alert("Success", "Profile picture updated successfully");
         } catch (error) {
           console.error("Error in image processing:", error);
@@ -250,39 +250,34 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      setSaving(true);
+      setLoading(true);
+      const updates = {
+        id: user?.id,
+        full_name: profileData.full_name,
+        username: profileData.username,
+        role: profileData.role,
+        bio: profileData.bio,
+        website: profileData.website,
+        github: profileData.github,
+        twitter: profileData.twitter,
+        theme_preference: profileData.theme_preference,
+        updated_at: new Date().toISOString(),
+      };
 
-      // Ensure email is not null
-      if (!profile.email) {
-        throw new Error("Email is required");
-      }
-
-      const { error } = await supabase.from("users").upsert(
-        {
-          id: user?.id,
-          email: profile.email,
-          full_name: profile.full_name,
-          username: profile.username,
-          bio: profile.bio,
-          website: profile.website,
-          role: profile.role,
-          github: profile.github,
-          twitter: profile.twitter,
-          theme_preference: profile.theme_preference,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "id",
-        }
-      );
+      const { error } = await supabase
+        .from("profiles")
+        .upsert(updates, { onConflict: "id" });
 
       if (error) throw error;
-      Alert.alert("Success", "Profile updated successfully");
+
+      // Refresh user data throughout the app
+      await refreshUserData();
+
+      Alert.alert("Success", "Profile updated successfully!");
     } catch (error: any) {
-      console.error("Error in handleSave:", error);
       Alert.alert("Error", error.message || "Failed to update profile");
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
@@ -308,8 +303,8 @@ export default function Profile() {
           >
             <Image
               source={
-                profile.avatar_url
-                  ? { uri: profile.avatar_url }
+                profileData.avatar_url
+                  ? { uri: profileData.avatar_url }
                   : require("../../assets/images/icons/profile48.png")
               }
               className="w-32 h-32 rounded-full"
@@ -327,9 +322,9 @@ export default function Profile() {
             </InterText>
             <TextInput
               className="bg-dark-400 text-white p-4 rounded-lg text-base"
-              value={profile.full_name}
+              value={profileData.full_name}
               onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, full_name: text }))
+                setProfileData((prev) => ({ ...prev, full_name: text }))
               }
               placeholder="Enter your full name"
               placeholderTextColor="#666"
@@ -342,9 +337,9 @@ export default function Profile() {
             </InterText>
             <TextInput
               className="bg-dark-400 text-white p-4 rounded-lg text-base"
-              value={profile.username}
+              value={profileData.username}
               onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, username: text }))
+                setProfileData((prev) => ({ ...prev, username: text }))
               }
               placeholder="Enter your username"
               placeholderTextColor="#666"
@@ -355,9 +350,9 @@ export default function Profile() {
             <InterText className="text-white mb-2 text-base">Email</InterText>
             <TextInput
               className="bg-dark-400 text-white p-4 rounded-lg text-base"
-              value={profile.email}
+              value={profileData.email}
               onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, email: text }))
+                setProfileData((prev) => ({ ...prev, email: text }))
               }
               placeholder="Enter your email"
               placeholderTextColor="#666"
@@ -370,9 +365,9 @@ export default function Profile() {
             <InterText className="text-white mb-2 text-base">Bio</InterText>
             <TextInput
               className="bg-dark-400 text-white p-4 rounded-lg text-base h-32"
-              value={profile.bio}
+              value={profileData.bio}
               onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, bio: text }))
+                setProfileData((prev) => ({ ...prev, bio: text }))
               }
               placeholder="Tell us about yourself"
               placeholderTextColor="#666"
@@ -385,9 +380,9 @@ export default function Profile() {
             <InterText className="text-white mb-2 text-base">Website</InterText>
             <TextInput
               className="bg-dark-400 text-white p-4 rounded-lg text-base"
-              value={profile.website}
+              value={profileData.website}
               onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, website: text }))
+                setProfileData((prev) => ({ ...prev, website: text }))
               }
               placeholder="https://your-website.com"
               placeholderTextColor="#666"
@@ -398,9 +393,9 @@ export default function Profile() {
             <InterText className="text-white mb-2 text-base">GitHub</InterText>
             <TextInput
               className="bg-dark-400 text-white p-4 rounded-lg text-base"
-              value={profile.github}
+              value={profileData.github}
               onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, github: text }))
+                setProfileData((prev) => ({ ...prev, github: text }))
               }
               placeholder="https://github.com/username"
               placeholderTextColor="#666"
@@ -411,9 +406,9 @@ export default function Profile() {
             <InterText className="text-white mb-2 text-base">Twitter</InterText>
             <TextInput
               className="bg-dark-400 text-white p-4 rounded-lg text-base"
-              value={profile.twitter}
+              value={profileData.twitter}
               onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, twitter: text }))
+                setProfileData((prev) => ({ ...prev, twitter: text }))
               }
               placeholder="https://twitter.com/username"
               placeholderTextColor="#666"
@@ -429,17 +424,17 @@ export default function Profile() {
                 <TouchableOpacity
                   key={theme}
                   className={`flex-1 p-4 rounded-lg ${
-                    profile.theme_preference === theme
+                    profileData.theme_preference === theme
                       ? "bg-primary"
                       : "bg-dark-400"
                   }`}
                   onPress={() =>
-                    setProfile((prev) => ({ ...prev, theme_preference: theme }))
+                    setProfileData((prev) => ({ ...prev, theme_preference: theme }))
                   }
                 >
                   <InterText
                     className={`text-center text-base ${
-                      profile.theme_preference === theme
+                      profileData.theme_preference === theme
                         ? "text-white"
                         : "text-gray-400"
                     }`}
