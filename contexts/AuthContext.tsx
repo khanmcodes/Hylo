@@ -75,6 +75,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           data: {
             username,
             full_name: name,
+            avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              name
+            )}&background=random&color=fff`,
           },
         },
       });
@@ -91,6 +94,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             username,
             full_name: name,
             email,
+            avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              name
+            )}&background=random&color=fff`,
+            updated_at: new Date().toISOString(),
           },
         ]);
 
@@ -98,13 +105,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.error("Error creating profile:", profileError);
           return { error: profileError };
         }
-
-        console.log("Profile created successfully with username:", username);
       }
 
       return { error: null };
-    } catch (error) {
-      console.error("Signup error:", error);
+    } catch (error: any) {
+      console.error("Error in signUp:", error);
       return { error };
     }
   };
