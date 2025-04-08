@@ -9,8 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "extra": {
-      "supabaseUrl": "${process.env.EXPO_PUBLIC_SUPABASE_URL}",
-      "supabaseAnonKey": "${process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY}"
+      "supabaseUrl": "https://hbfnxtfrrkrmjmijuaur.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiZm54dGZycmtybWptaWp1YXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA3NTg2MzksImV4cCI6MjA1NjMzNDYzOX0.9jjt83DUk4-EcWpcPJ_D5Zv1ULL7vH6iU8HjES7nEEs"
     },
     "ios": {
       "supportsTablet": true
@@ -26,10 +26,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font"
-    ],
+    "plugins": ["expo-router", "expo-font"],
     "experiments": {
       "typedRoutes": true
     },
