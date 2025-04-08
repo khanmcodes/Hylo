@@ -14,6 +14,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { decode } from "base64-arraybuffer";
 import { User } from "@supabase/supabase-js";
 
@@ -44,6 +45,76 @@ type UserProfile = {
   theme_preference: "light" | "dark" | "system";
   created_at: string;
   updated_at: string;
+};
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
+
+const uploadImage = async (
+  base64: string,
+  filePath: string,
+  retryCount = 0
+): Promise<string> => {
+  try {
+    // First, try to delete the existing profile image if it exists
+    try {
+      const { data: existingFiles } = await supabase.storage
+        .from("avatars")
+        .list(filePath.substring(0, filePath.lastIndexOf("/")));
+
+      if (existingFiles && existingFiles.length > 0) {
+        const filesToDelete = existingFiles.map(
+          (file) =>
+            `${filePath.substring(0, filePath.lastIndexOf("/"))}/${file.name}`
+        );
+        await supabase.storage.from("avatars").remove(filesToDelete);
+      }
+    } catch (deleteError) {
+      console.log(
+        "No existing files to delete or error deleting:",
+        deleteError
+      );
+    }
+
+    // Upload the new image
+    const { error } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, decode(base64), {
+        contentType: "image/jpeg",
+        upsert: true,
+        cacheControl: "3600",
+      });
+
+    if (error) {
+      if (error.message.includes("not found") && retryCount < MAX_RETRIES) {
+        // Try to create the folder first
+        const folderPath = filePath.substring(0, filePath.lastIndexOf("/"));
+        await supabase.storage
+          .from("avatars")
+          .upload(`${folderPath}/.keep`, new Uint8Array(), {
+            contentType: "text/plain",
+            upsert: true,
+          });
+
+        // Wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+        return uploadImage(base64, filePath, retryCount + 1);
+      }
+      throw error;
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+    return publicUrl;
+  } catch (error) {
+    if (retryCount < MAX_RETRIES) {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+      return uploadImage(base64, filePath, retryCount + 1);
+    }
+    throw error;
+  }
 };
 
 export default function Profile() {
@@ -128,74 +199,43 @@ export default function Profile() {
 
       if (!result.canceled && result.assets[0].base64) {
         setSaving(true);
-        const base64 = result.assets[0].base64;
-        const fileExt = result.assets[0].uri.split(".").pop();
-        const fileName = `profile.${fileExt}`;
-        const folderPath = `${user?.id}/`;
-        const filePath = `${folderPath}${fileName}`;
 
-        // Convert base64 to blob
-        const byteCharacters = atob(base64);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: `image/${fileExt}` });
+        try {
+          // Compress and resize the image
+          const compressedImage = await manipulateAsync(
+            result.assets[0].uri,
+            [{ resize: { width: 500 } }],
+            {
+              compress: 0.7,
+              format: SaveFormat.JPEG,
+              base64: true,
+            }
+          );
 
-        // Upload to Supabase Storage
-        const { error: uploadError } = await supabase.storage
-          .from("User Avatar Images")
-          .upload(filePath, blob, {
-            contentType: `image/${fileExt}`,
-            upsert: true,
-            cacheControl: "3600",
-          });
-
-        if (uploadError) {
-          // If folder doesn't exist, try creating it by uploading a dummy file
-          if (uploadError.message.includes("not found")) {
-            const dummyPath = `${folderPath}.keep`;
-            await supabase.storage
-              .from("User Avatar Images")
-              .upload(dummyPath, new Blob([""], { type: "text/plain" }), {
-                contentType: "text/plain",
-                upsert: true,
-              });
-
-            // Retry the original upload
-            const { error: retryError } = await supabase.storage
-              .from("User Avatar Images")
-              .upload(filePath, blob, {
-                contentType: `image/${fileExt}`,
-                upsert: true,
-                cacheControl: "3600",
-              });
-
-            if (retryError) throw retryError;
-          } else {
-            throw uploadError;
+          if (!compressedImage.base64) {
+            throw new Error("Failed to compress image");
           }
+
+          const filePath = `${user?.id}/profile.jpg`;
+          const publicUrl = await uploadImage(compressedImage.base64, filePath);
+
+          // Update profile with new avatar URL
+          const { error: updateError } = await supabase
+            .from("users")
+            .update({
+              avatar_url: publicUrl,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", user?.id);
+
+          if (updateError) throw updateError;
+
+          setProfile((prev) => ({ ...prev, avatar_url: publicUrl }));
+          Alert.alert("Success", "Profile picture updated successfully");
+        } catch (error) {
+          console.error("Error in image processing:", error);
+          Alert.alert("Error", "Failed to process image. Please try again.");
         }
-
-        // Get public URL
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("User Avatar Images").getPublicUrl(filePath);
-
-        // Update profile with new avatar URL
-        const { error: updateError } = await supabase
-          .from("users")
-          .update({
-            avatar_url: publicUrl,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", user?.id);
-
-        if (updateError) throw updateError;
-
-        setProfile((prev) => ({ ...prev, avatar_url: publicUrl }));
-        Alert.alert("Success", "Profile picture updated successfully");
       }
     } catch (error) {
       console.error("Error in handleImagePick:", error);
