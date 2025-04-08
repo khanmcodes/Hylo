@@ -8,7 +8,7 @@ interface InterTextProps extends TextProps {
 
 const InterText: React.FC<InterTextProps> = ({ className, style, children, ...props }) => {
   return (
-    <Text className={`font-sans ${className}`} style={style} {...props}>
+    <Text className={`font-sans text-base ${className}`} style={style} {...props}>
       {children}
     </Text>
   );

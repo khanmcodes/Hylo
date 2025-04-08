@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Modal, Pressable, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -6,7 +6,9 @@ import * as DocumentPicker from 'expo-document-picker';
 import InterText from '../../components/InterText';
 import Feather from 'react-native-vector-icons/Feather';
 import { DocumentPickerAsset } from 'expo-document-picker';
-import { useDropzone } from 'react-dropzone';
+import { useWindowDimensions, Platform } from 'react-native';
+
+
 
 const MyCourses = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -14,6 +16,8 @@ const MyCourses = () => {
   const [fileType, setFileType] = useState('');
   const [mode, setMode] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const { width } = useWindowDimensions();
+  const isMobile = width < 640; // Tailwind 'sm' starts at 640px
 
   const courses = [
     { emoji: '📑', title: 'Create a Course', color: ['#3B82F6', '#1e1e1e'] as [string, string], desc: 'Upload a document or course outline, Hylo will generate learning materials, quizzes, and a study plan.', action: () => setModalVisible(true), btn: 'Get Started' },
@@ -36,17 +40,6 @@ const MyCourses = () => {
     }
   };
 
-  const onDrop = (acceptedFiles: File[]) => {
-    const fileArray: DocumentPickerAsset[] = acceptedFiles.map(file => ({
-      name: file.name,
-      type: file.type,
-      uri: '', // Set to an empty string or handle as needed
-    }));
-    setFiles(prevFiles => [...prevFiles, ...fileArray]);
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
-
   const handleUpload = () => {
     setIsUploading(true);
     // Simulate file upload (replace with actual upload logic)
@@ -62,28 +55,37 @@ const MyCourses = () => {
   const isUploadEnabled = fileType !== '' && mode !== '' && files.length > 0;
 
   return (
-    <View className="flex-1 bg-dark-300 px-24 py-10">
+    <ScrollView className="flex-1 bg-dark-300 px-4 sm:px-24 py-9 lg:py-10">
       <InterText className="text-2xl font-medium text-white text-center mb-4">My Courses</InterText>
 
       {/* Cards Grid */}
-      <View className="flex flex-wrap flex-row justify-center gap-2">
+      <View className="flex flex-wrap p-4 flex-row justify-center">
         {courses.map((course, index) => (
           <TouchableOpacity
             key={index}
-            className="w-full sm:w-[48%] lg:w-[18%] p-4 rounded-xl "
+            className="w-[50%] sm:w-[48%] md:w-[20%] lg:w-[30%] xl:w-[24%] p-1 sm:p-3 rounded-xl "
             onPress={course.action || (() => { })}
+            style={{ borderRadius: 14 }}
           >
             <LinearGradient
-              colors={course.color}
-              locations={[0, 0.5, 0.5, 0]}  // First color fades at 50%, second starts from 50%
+              colors={isMobile ? [course.color[0], '#292929'] : course.color}
+              // colors={course.color}
+              locations={isMobile ? [0, 1] : [0, 0.5, 0.5, 0]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
-              className="p-6 rounded-xl items-center">
-              <InterText className="text-2xl text-white">{course.emoji}</InterText>
-              <InterText className="text-2xl font-regular text-white">{course.title}</InterText>
-              <InterText className="text-xs text-center text-gray-400 mt-2 font-medium">{course.desc}</InterText>
-              <Pressable className="px-6 py-1 bg-primary rounded-full mt-5" onPress={course.action}>
-                <InterText className="text-white text-center text-base font-regular">{course.btn}</InterText>
+              style={{
+                borderRadius: 14,
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderWidth: 1,
+                borderColor: '#292929',
+              }}
+              className="py-2 px-4 sm:pt-6 rounded-xl sm:items-center justify-items-start sm:justify-items-center">
+              <InterText className="text-lg mb-1 sm:text-2xl text-white sm:text-center">{course.emoji}</InterText>
+              <InterText className="xl:text-2xl mb-2 lg:text-xl font-medium sm:font-normal sm:text-center text-white">{course.title}</InterText>
+              <InterText className="hidden sm:block text-xs text-center text-gray-400 mt-2 font-medium">{course.desc}</InterText>
+              <Pressable className="hidden sm:block px-6 py-1 bg-primary rounded-full mt-5 mb-5" onPress={course.action}>
+                <InterText className="text-white text-center xl:text-base lg:text-sm text-xs font-regular">{course.btn}</InterText>
               </Pressable>
             </LinearGradient>
           </TouchableOpacity>
@@ -91,33 +93,33 @@ const MyCourses = () => {
       </View>
 
       {/* In Progress Section */}
-      <View className="mt-8 mx-64">
+      <View className="mt-8 mx-4 sm:mx-64">
         <InterText className="text-lg font-semibold text-white">
           In Progress <InterText className="text-gray-400 font-regular">{inProgressCourses.length}</InterText>
         </InterText>
         <View className="justify-center items-center">
           {inProgressCourses.length === 0 ? (
-            <InterText className="text-gray-400">Ongoing courses will appear here.</InterText>
+            <InterText className="text-gray-400 mt-7">Ongoing courses will appear here.</InterText>
           ) : (
             // Render course card components here
             // Example: inProgressCourses.map(course => <CourseCard key={course.id} course={course} />)
-            <InterText className="text-gray-400">Course cards will be rendered here.</InterText>
+            <InterText className="text-gray-400 mt-7">Course cards will be rendered here.</InterText>
           )}
         </View>
       </View>
 
       {/* Enrolled Section */}
-      <View className="mt-16 mx-64">
+      <View className="mt-16 mx-4 sm:mx-64">
         <InterText className="text-lg font-semibold text-white">
           Enrolled <InterText className="text-gray-400 font-regular">{enrolledCourses.length}</InterText>
         </InterText>
         <View className="justify-center items-center">
           {enrolledCourses.length === 0 ? (
-            <InterText className="text-gray-400">Your enrolled courses will appear here.</InterText>
+            <InterText className="text-gray-400 mt-7">Your enrolled courses will appear here.</InterText>
           ) : (
             // Render course card components here
             // Example: enrolledCourses.map(course => <CourseCard key={course.id} course={course} />)
-            <InterText className="text-gray-400">Course cards will be rendered here.</InterText>
+            <InterText className="text-gray-400 mt-7">Course cards will be rendered here.</InterText>
           )}
         </View>
       </View>
@@ -127,7 +129,7 @@ const MyCourses = () => {
         <BlurView intensity={30} tint="dark" className="absolute inset-0 flex items-center justify-center">
           <View className="bg-dark-200 p-6 rounded-xl w-11/12 max-w-md opacity-100">
             {/* Close Icon */}
-            <Pressable onPress={() => setModalVisible(false)} className="absolute top-4 right-4">
+            <Pressable onPress={() => setModalVisible(false)} hitSlop={10} className="absolute top-4 right-4 z-20">
               <Feather name="x" size={24} color="white" />
             </Pressable>
 
@@ -136,7 +138,7 @@ const MyCourses = () => {
             <View className="h-[1px] bg-gray-700" />
             {/* Course Type Selection */}
             <InterText className="text-white mb-2 mt-4">Choose what you are uploading:</InterText>
-            <View className="flex flex-row justify-around mb-4 mt-4">
+            <View className="flex sm:flex-row flex-col gap-2 justify-around mb-4 mt-4">
               <TouchableOpacity
                 onPress={() => setFileType('outline')}
                 className={`py-3 px-5 border border-gray-700 rounded-full ${fileType === 'outline' ? 'bg-primary' : 'bg-dark-500'}`}
@@ -154,7 +156,7 @@ const MyCourses = () => {
             <View className="h-[1px] bg-gray-700" />
             {/* Mode Selection */}
             <InterText className="text-white mt-4 mb-2">Select Mode:</InterText>
-            <View className="flex flex-row justify-around mb-4 mt-4">
+            <View className="flex sm:flex-row flex-col gap-2 justify-around mb-4 mt-4">
               <TouchableOpacity
                 onPress={() => setMode('podcast')}
                 className={`py-3 px-5 border border-gray-700 rounded-full ${mode === 'podcast' ? 'bg-primary' : 'bg-dark-500'}`}
@@ -179,24 +181,19 @@ const MyCourses = () => {
               <InterText className="text-white">{files.length > 0 ? `📁 ${files.map(file => file.name).join(', ')}` : 'No Files Selected'}</InterText>
             </Pressable>
 
-            {/* Dashed Box for Drag and Drop Uploading */}
-            <div {...getRootProps()} className="border-dashed border-2 border-gray-400 rounded-lg p-4 mb-4">
-              <input {...getInputProps()} />
-              <InterText className="text-gray-400 text-center">Drag and drop your files here</InterText>
-              {/* Preview Section */}
-              {files.length > 0 && (
-                <View className="flex items-center justify-between mt-2">
-                  {files.map((file, index) => (
-                    <View key={index} className="flex-row items-center justify-between w-full">
-                      <InterText className="text-white text-center">{file.name}</InterText>
-                      <Pressable onPress={() => setFiles(prev => prev.filter((_, i) => i !== index))}>
-                        <Feather name="x" size={20} color="red" />
-                      </Pressable>
-                    </View>
-                  ))}
-                </View>
-              )}
-            </div>
+            {/* File Preview Section */}
+            {files.length > 0 && (
+              <View className="border-dashed border-2 border-gray-400 rounded-lg p-4 mb-4">
+                {files.map((file, index) => (
+                  <View key={index} className="flex-row items-center justify-between w-full mb-2">
+                    <InterText className="text-white">{file.name}</InterText>
+                    <Pressable onPress={() => setFiles(prev => prev.filter((_, i) => i !== index))}>
+                      <Feather name="x" size={20} color="red" />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            )}
 
             <Pressable
               className={`px-6 py-1.5 bg-primary w-fit self-center rounded-full mt-5 ${isUploadEnabled ? '' : 'opacity-50'}`}
@@ -208,7 +205,7 @@ const MyCourses = () => {
           </View>
         </BlurView>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
