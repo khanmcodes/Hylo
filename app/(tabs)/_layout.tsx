@@ -5,7 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const _Layout = () => {
   const { user, loading } = useAuth();
-  const router = useRouter();
+  const router = useRouter();  
 
   // Protect all tab routes - redirect to login if not authenticated
   useEffect(() => {
@@ -58,25 +58,26 @@ const _Layout = () => {
             paddingBottom: 8,
             paddingTop: 8,
             position: "absolute",
-            bottom: 40,
-            left: 20,
-            right: 20,
-            borderRadius: 16,
-            height: 64,
+            // bottom: 40,
+            // left: 20,
+            // right: 20,
+            // borderRadius: 50,
+            height: 90,
             elevation: 0,
-            shadowColor: "#000",
-            shadowOpacity: 0.1,
-            shadowRadius: 24,
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
+            // shadowColor: "#000",
+            // shadowOpacity: 0.1,
+            // shadowRadius: 24,
+            // shadowOffset: {
+            //   width: 0,
+            //   height: 4,
+            // },
             borderWidth: 1,
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: '#292929',
           },
         }),
         tabBarItemStyle: {
           paddingBottom: 6,
+          paddingTop: 3,
         },
         tabBarIcon: ({ focused }) => null,
         tabBarLabel: () => null,
@@ -97,8 +98,8 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/1.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 34,
-                  height: Platform.OS === "web" ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 30,
+                  height: Platform.OS === "web" ? 40 : 30,
                 }}
                 resizeMode="contain"
               />
@@ -121,8 +122,8 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/2.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 34,
-                  height: Platform.OS === "web" ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 30,
+                  height: Platform.OS === "web" ? 40 : 30,
                 }}
                 resizeMode="contain"
               />
@@ -145,8 +146,8 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/3.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 34,
-                  height: Platform.OS === "web" ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 30,
+                  height: Platform.OS === "web" ? 40 : 30,
                 }}
                 resizeMode="contain"
               />
@@ -169,8 +170,8 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/4.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 34,
-                  height: Platform.OS === "web" ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 30,
+                  height: Platform.OS === "web" ? 40 : 30,
                 }}
                 resizeMode="contain"
               />
@@ -193,8 +194,8 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/5.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 34,
-                  height: Platform.OS === "web" ? 40 : 34,
+                  width: Platform.OS === "web" ? 40 : 30,
+                  height: Platform.OS === "web" ? 40 : 30,
                 }}
                 resizeMode="contain"
               />

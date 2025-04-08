@@ -5,10 +5,8 @@ import { useAuth } from "../../contexts/AuthContext";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const displayName = user?.user_metadata?.full_name || "Khan Muhammad";
-  const profilePicture =
-    user?.user_metadata?.avatar_url ||
-    require("../../assets/images/icons/profile48.png");
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.username;
+  const profilePicture = user?.user_metadata?.avatar_url
 
   return (
     <View className="flex-1 px-44 py-28 bg-dark-300">
@@ -18,11 +16,8 @@ export default function Dashboard() {
       <View className="flex-row items-center w-fit gap-2  mb-3">
         <View className="border-2 border-primary rounded-full w-fit p-0.5">
           <Image
-            source={
-              typeof profilePicture === "string"
-                ? { uri: profilePicture }
-                : profilePicture
-            }
+            source={{ uri: profilePicture }}
+            defaultSource={require("../../assets/images/icons/profile48.png")}
             className="rounded-full"
             style={{ width: 35, height: 35 }}
           />
