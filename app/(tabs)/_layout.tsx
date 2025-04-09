@@ -5,7 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const _Layout = () => {
   const { user, loading } = useAuth();
-  const router = useRouter();  
+  const router = useRouter();
 
   // Protect all tab routes - redirect to login if not authenticated
   useEffect(() => {
@@ -25,11 +25,14 @@ const _Layout = () => {
     return null;
   }
   return (
+
+
+    
     <Tabs
       screenOptions={{
         tabBarStyle: Platform.select({
           web: {
-            backgroundColor: 'rgba(22, 22, 22, 0.7)',
+            backgroundColor: "#161616",
             borderTopWidth: 0,
             paddingBottom: 8,
             paddingTop: 8,
@@ -48,36 +51,30 @@ const _Layout = () => {
               width: 0,
               height: 4,
             },
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
           },
           default: {
-            backgroundColor: 'rgba(22, 22, 22, 0.7)',
+            backgroundColor: "#161616",
             borderTopWidth: 0,
             paddingBottom: 8,
             paddingTop: 8,
             position: "absolute",
-            // bottom: 40,
-            // left: 20,
-            // right: 20,
-            // borderRadius: 50,
-            height: 90,
+            bottom: 40,
+            left: 20,
+            right: 20,
+            borderRadius: 16,
+            height: 64,
             elevation: 0,
-            // shadowColor: "#000",
-            // shadowOpacity: 0.1,
-            // shadowRadius: 24,
-            // shadowOffset: {
-            //   width: 0,
-            //   height: 4,
-            // },
-            borderWidth: 1,
-            borderColor: '#292929',
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 24,
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
           },
         }),
         tabBarItemStyle: {
           paddingBottom: 6,
-          paddingTop: 3,
         },
         tabBarIcon: ({ focused }) => null,
         tabBarLabel: () => null,
@@ -98,13 +95,13 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/1.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 30,
-                  height: Platform.OS === "web" ? 40 : 30,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
               )}
             </>
           ),
@@ -122,13 +119,13 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/2.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 30,
-                  height: Platform.OS === "web" ? 40 : 30,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
               )}
             </>
           ),
@@ -146,13 +143,13 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/3.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 30,
-                  height: Platform.OS === "web" ? 40 : 30,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
               )}
             </>
           ),
@@ -170,13 +167,13 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/4.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 30,
-                  height: Platform.OS === "web" ? 40 : 30,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
               )}
             </>
           ),
@@ -194,25 +191,19 @@ const _Layout = () => {
                     : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/5.png")
                 }
                 style={{
-                  width: Platform.OS === "web" ? 40 : 30,
-                  height: Platform.OS === "web" ? 40 : 30,
+                  width: Platform.OS === "web" ? 40 : 34,
+                  height: Platform.OS === "web" ? 40 : 34,
                 }}
                 resizeMode="contain"
               />
               {focused && (
-                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-3.5" />
+                <View className="w-1 h-1 rounded-full bg-white absolute -bottom-4" />
               )}
             </>
           ),
         }}
       />
 
-      {/* Hidden tabs */}
-      <Tabs.Screen name="accolades" options={{ href: null }} />
-      <Tabs.Screen name="profile" options={{ href: null }} />
-      <Tabs.Screen name="settings" options={{ href: null }} />
-      <Tabs.Screen name="bookmarks" options={{ href: null }} />
-      <Tabs.Screen name="explore" options={{ href: null }} />
     </Tabs>
   );
 };
