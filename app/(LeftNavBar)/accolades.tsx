@@ -1,3 +1,4 @@
+// app/(LeftNavBar)/accolades.tsx
 import { View } from 'react-native';
 import InterText from '../../components/InterText';
 
