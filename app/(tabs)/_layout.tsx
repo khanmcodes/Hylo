@@ -5,61 +5,57 @@ import { Image, Platform, View, TouchableOpacity, StyleSheet } from "react-nativ
 import { useAuth } from "../../contexts/AuthContext";
 import Icon from 'react-native-vector-icons/Feather';
 
+type AppRoute = {
+  name: string;
+  route: string;
+  icon: string;
+};
+
 const _Layout = () => {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
-  // Left navbar items configuration - Fixed case sensitivity
-  const leftNavItems = [
+  // Left navbar items configuration
+  const leftNavItems: AppRoute[] = [
     {
       name: 'Accolades',
-      route: '/(LeftNavBar)/accolades',
+      route: "/(tabs)/accolades",
       icon: 'award',
     },
     {
       name: 'Bookmarks',
-      route: '/(LeftNavBar)/bookmarks',
+      route: "/(tabs)/bookmarks",
       icon: 'bookmark',
     },
     {
       name: 'Explore',
-      route: '/(LeftNavBar)/explore',
+      route: "/(tabs)/explore",
       icon: 'compass',
     },
     {
       name: 'Profile',
-      route: '/(LeftNavBar)/profile',
+      route: "/(tabs)/profile",
       icon: 'user',
     },
     {
       name: 'Settings',
-      route: '/(LeftNavBar)/settings',
+      route: "/(tabs)/settings",
       icon: 'settings',
     },
   ];
 
-  // Protect all tab routes - redirect to login if not authenticated
+  // Protect routes - redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !user) {
-      // User is not authenticated, redirect to login
       router.replace("/(auth)/login");
     }
   }, [user, loading, router]);
 
-  // Don't render anything while checking authentication
-  if (loading) {
+  if (loading || !user) {
     return null;
   }
 
-  // Only render the navigation if authenticated
-  if (!user) {
-    return null;
-  }
-
-  // Check if current route is from LeftNavBar
-  const isLeftNavRoute = pathname.includes('(LeftNavBar)');
-  
   // Left navbar component
   const LeftNavbar = () => (
     <View style={[
@@ -75,6 +71,18 @@ const _Layout = () => {
         alignItems: "center",
         justifyContent: "center",
         zIndex: 50,
+        ...(Platform.OS === 'web' ? {
+          boxShadow: '4px 0 24px rgba(0, 0, 0, 0.1)'
+        } : {
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 4,
+            height: 0,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 24,
+          elevation: 5,
+        })
       }
     ]}>
       <View style={{ 
@@ -85,15 +93,14 @@ const _Layout = () => {
         gap: 32
       }}>
         {leftNavItems.map((item) => {
-          const isActive = pathname.includes(item.route);
+          const isActive = pathname === item.route;
           
           return (
             <TouchableOpacity
               key={item.name}
               style={{ position: "relative", alignItems: "center", justifyContent: "center" }}
               onPress={() => {
-                console.log("Navigating to:", item.route); // Debug log
-                router.push(item.route);
+                router.push(item.route as any);
               }}
             >
               <View style={{ alignItems: "center", justifyContent: "center", width: 40, height: 40 }}>
@@ -117,220 +124,225 @@ const _Layout = () => {
     </View>
   );
 
-  // If the path is a LeftNavBar route, we'll render just the left navbar + content
-  if (isLeftNavRoute) {
-    return (
-      <View style={{ flex: 1 }}>
-        <LeftNavbar />
-        <View style={{ flex: 1, marginLeft: 70 }}>
-          <Slot />
-        </View>
-      </View>
-    );
-  }
-
-  // Otherwise, render the full tabs layout
   return (
     <View style={{ flex: 1 }}>
       {/* Render Left Navbar */}
       <LeftNavbar />
       
-      {/* Render Bottom Tabs */}
-      <Tabs
-        screenOptions={{
-          tabBarStyle: Platform.select({
-            web: {
-              backgroundColor: "#161616",
-              borderTopWidth: 0,
-              paddingBottom: 8,
-              paddingTop: 8,
-              position: "absolute",
-              bottom: 40,
-              left: "45%",
-              width: 400,
-              transform: [{ translateX: -200 }],
-              borderRadius: 16,
-              height: 64,
-              elevation: 0,
-              shadowColor: "#000",
-              shadowOpacity: 0.1,
-              shadowRadius: 24,
-              shadowOffset: {
-                width: 0,
-                height: 4,
+      <View style={{ flex: 1, marginLeft: 70 }}>
+        {/* Main Content Area */}
+        <Tabs
+          screenOptions={{
+            tabBarStyle: Platform.select({
+              web: {
+                backgroundColor: "#161616",
+                borderTopWidth: 0,
+                paddingBottom: 8,
+                paddingTop: 8,
+                position: "absolute",
+                bottom: 40,
+                left: "45%",
+                width: 400,
+                transform: [{ translateX: -200 }],
+                borderRadius: 16,
+                height: 64,
+                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.1)'
               },
-              marginLeft: 70, // Offset for left navbar
-            },
-            default: {
-              backgroundColor: "#161616",
-              borderTopWidth: 0,
-              paddingBottom: 8,
-              paddingTop: 8,
-              position: "absolute",
-              bottom: 40,
-              left: 90, // Offset from left edge to account for left navbar
-              right: 20,
-              borderRadius: 16,
-              height: 64,
-              elevation: 0,
-              shadowColor: "#000",
-              shadowOpacity: 0.1,
-              shadowRadius: 24,
-              shadowOffset: {
-                width: 0,
-                height: 4,
+              default: {
+                backgroundColor: "#161616",
+                borderTopWidth: 0,
+                paddingBottom: 8,
+                paddingTop: 8,
+                position: "absolute",
+                bottom: 40,
+                left: 20,
+                right: 20,
+                borderRadius: 16,
+                height: 64,
+                elevation: 0,
+                shadowColor: "#000",
+                shadowOpacity: 0.1,
+                shadowRadius: 24,
+                shadowOffset: {
+                  width: 0,
+                  height: 4,
+                },
               },
+            }),
+            tabBarItemStyle: {
+              paddingBottom: 6,
             },
-          }),
-          tabBarItemStyle: {
-            paddingBottom: 6,
-          },
-          tabBarIcon: ({ focused }) => null,
-          tabBarLabel: () => null,
-          tabBarActiveTintColor: "#4A90E2",
-          tabBarInactiveTintColor: "#9CA3AF",
-          headerShown: false,
-        }}
-        sceneContainerStyle={{ 
-          marginLeft: 70, // Add left margin to content to make space for left navbar
-        }}
-      >
-        <Tabs.Screen
-          name="dashboard"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <>
-                <Image
-                  source={
-                    focused
-                      ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/1.png")
-                      : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/1.png")
-                  }
-                  style={{
-                    width: Platform.OS === "web" ? 40 : 34,
-                    height: Platform.OS === "web" ? 40 : 34,
-                  }}
-                  resizeMode="contain"
-                />
-                {focused && (
-                  <View style={styles.bottomTabIndicator} />
-                )}
-              </>
-            ),
+            tabBarIcon: ({ focused }: { focused: boolean }) => null,
+            tabBarLabel: () => null,
+            tabBarActiveTintColor: "#4A90E2",
+            tabBarInactiveTintColor: "#9CA3AF",
+            headerShown: false,
           }}
-        />
-        <Tabs.Screen
-          name="continue_course"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <>
-                <Image
-                  source={
-                    focused
-                      ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/2.png")
-                      : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/2.png")
-                  }
-                  style={{
-                    width: Platform.OS === "web" ? 40 : 34,
-                    height: Platform.OS === "web" ? 40 : 34,
-                  }}
-                  resizeMode="contain"
-                />
-                {focused && (
-                  <View style={styles.bottomTabIndicator} />
-                )}
-              </>
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="chat"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <>
-                <Image
-                  source={
-                    focused
-                      ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/3.png")
-                      : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/3.png")
-                  }
-                  style={{
-                    width: Platform.OS === "web" ? 40 : 34,
-                    height: Platform.OS === "web" ? 40 : 34,
-                  }}
-                  resizeMode="contain"
-                />
-                {focused && (
-                  <View style={styles.bottomTabIndicator} />
-                )}
-              </>
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="search"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <>
-                <Image
-                  source={
-                    focused
-                      ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/4.png")
-                      : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/4.png")
-                  }
-                  style={{
-                    width: Platform.OS === "web" ? 40 : 34,
-                    height: Platform.OS === "web" ? 40 : 34,
-                  }}
-                  resizeMode="contain"
-                />
-                {focused && (
-                  <View style={styles.bottomTabIndicator} />
-                )}
-              </>
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="my_courses"
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <>
-                <Image
-                  source={
-                    focused
-                      ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/5.png")
-                      : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/5.png")
-                  }
-                  style={{
-                    width: Platform.OS === "web" ? 40 : 34,
-                    height: Platform.OS === "web" ? 40 : 34,
-                  }}
-                  resizeMode="contain"
-                />
-                {focused && (
-                  <View style={styles.bottomTabIndicator} />
-                )}
-              </>
-            ),
-          }}
-        />
-      </Tabs>
+        >
+          <Tabs.Screen
+            name="dashboard"
+            options={{
+              tabBarIcon: ({ focused }: { focused: boolean }) => (
+                <>
+                  <Image
+                    source={
+                      focused
+                        ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/1.png")
+                        : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/1.png")
+                    }
+                    style={{
+                      width: Platform.OS === "web" ? 40 : 34,
+                      height: Platform.OS === "web" ? 40 : 34,
+                    }}
+                    resizeMode="contain"
+                  />
+                  {focused && (
+                    <View style={styles.bottomTabIndicator} />
+                  )}
+                </>
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="continue_course"
+            options={{
+              tabBarIcon: ({ focused }: { focused: boolean }) => (
+                <>
+                  <Image
+                    source={
+                      focused
+                        ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/2.png")
+                        : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/2.png")
+                    }
+                    style={{
+                      width: Platform.OS === "web" ? 40 : 34,
+                      height: Platform.OS === "web" ? 40 : 34,
+                    }}
+                    resizeMode="contain"
+                  />
+                  {focused && (
+                    <View style={styles.bottomTabIndicator} />
+                  )}
+                </>
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="chat"
+            options={{
+              tabBarIcon: ({ focused }: { focused: boolean }) => (
+                <>
+                  <Image
+                    source={
+                      focused
+                        ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/3.png")
+                        : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/3.png")
+                    }
+                    style={{
+                      width: Platform.OS === "web" ? 40 : 34,
+                      height: Platform.OS === "web" ? 40 : 34,
+                    }}
+                    resizeMode="contain"
+                  />
+                  {focused && (
+                    <View style={styles.bottomTabIndicator} />
+                  )}
+                </>
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="search"
+            options={{
+              tabBarIcon: ({ focused }: { focused: boolean }) => (
+                <>
+                  <Image
+                    source={
+                      focused
+                        ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/4.png")
+                        : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/4.png")
+                    }
+                    style={{
+                      width: Platform.OS === "web" ? 40 : 34,
+                      height: Platform.OS === "web" ? 40 : 34,
+                    }}
+                    resizeMode="contain"
+                  />
+                  {focused && (
+                    <View style={styles.bottomTabIndicator} />
+                  )}
+                </>
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="my_courses"
+            options={{
+              tabBarIcon: ({ focused }: { focused: boolean }) => (
+                <>
+                  <Image
+                    source={
+                      focused
+                        ? require("../../assets/images/Hylo Icons v1 (Dark) (Active)/5.png")
+                        : require("../../assets/images/Hylo Icons v1 (Dark) (NOT Active)/5.png")
+                    }
+                    style={{
+                      width: Platform.OS === "web" ? 40 : 34,
+                      height: Platform.OS === "web" ? 40 : 34,
+                    }}
+                    resizeMode="contain"
+                  />
+                  {focused && (
+                    <View style={styles.bottomTabIndicator} />
+                  )}
+                </>
+              ),
+            }}
+          />
+
+          {/* Add screens for left navbar routes */}
+          <Tabs.Screen
+            name="accolades"
+            options={{ href: null }}
+          />
+          <Tabs.Screen
+            name="bookmarks"
+            options={{ href: null }}
+          />
+          <Tabs.Screen
+            name="explore"
+            options={{ href: null }}
+          />
+          <Tabs.Screen
+            name="profile"
+            options={{ href: null }}
+          />
+          <Tabs.Screen
+            name="settings"
+            options={{ href: null }}
+          />
+        </Tabs>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  leftNavbar: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 4,
-      height: 0,
+  leftNavbar: Platform.select({
+    web: {
+      boxShadow: '4px 0 24px rgba(0, 0, 0, 0.1)'
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 24,
-    elevation: 5,
-  },
+    default: {
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 4,
+        height: 0,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 24,
+      elevation: 5,
+    }
+  }),
   activeIndicator: {
     position: "absolute",
     width: 1,
