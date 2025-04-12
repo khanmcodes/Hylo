@@ -1,4 +1,5 @@
-import { View, Image } from "react-native";
+// /app/(tabs)/dashboard.tsx
+import { View, Image, Platform, Dimensions } from "react-native";
 import React from "react";
 import InterText from "../../components/InterText";
 import { useAuth } from "../../contexts/AuthContext";
@@ -6,14 +7,18 @@ import { useAuth } from "../../contexts/AuthContext";
 export default function Dashboard() {
   const { user } = useAuth();
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.username;
-  const profilePicture = user?.user_metadata?.avatar_url
+  const profilePicture = user?.user_metadata?.avatar_url;
+  
+  // Get screen width to apply responsive padding
+  const { width } = Dimensions.get('window');
+  const isSmallScreen = width < 768;
 
   return (
-    <View className="flex-1 px-44 py-28 bg-dark-300">
+    <View className={`flex-1 bg-dark-300 ${isSmallScreen ? 'px-6 py-8' : 'px-44 py-28'}`}>
       <InterText className="text-xl font-medium text-white mb-3">
         Hey,
       </InterText>
-      <View className="flex-row items-center w-fit gap-2  mb-3">
+      <View className="flex-row items-center w-fit gap-2 mb-3">
         <View className="border-2 border-primary rounded-full w-fit p-0.5">
           <Image
             source={{ uri: profilePicture }}
