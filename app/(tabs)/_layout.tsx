@@ -1,7 +1,7 @@
 // /app/(tabs)/_layout.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, useRouter, usePathname, Slot } from "expo-router";
-import { Image, Platform, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Image, Platform, View, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -15,28 +15,35 @@ const _Layout = () => {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isWeb = Platform.OS === 'web';
 
-  // Left navbar items configuration
-  const leftNavItems: AppRoute[] = [
+  // Nav items configuration
+  const navItems: AppRoute[] = [
     {
-      name: 'Accolades',
+      name: 'Close',
+      route: "",  // No route for close button
+      icon: 'x',
+    },
+    {
+      name: 'Profile',
+      route: "/(tabs)/profile",
+      icon: 'user',
+    },
+    {
+      name: 'Compass',
+      route: "/(tabs)/explore",
+      icon: 'compass',
+    },
+    {
+      name: 'Awards',
       route: "/(tabs)/accolades",
       icon: 'award',
     },
     {
       name: 'Bookmarks',
       route: "/(tabs)/bookmarks",
-      icon: 'bookmark',
-    },
-    {
-      name: 'Explore',
-      route: "/(tabs)/explore",
-      icon: 'compass',
-    },
-    {
-      name: 'Profile',
-      route: "/(tabs)/profile",
-      icon: 'user',
+      icon: 'heart',
     },
     {
       name: 'Settings',
@@ -56,80 +63,128 @@ const _Layout = () => {
     return null;
   }
 
-  // Left navbar component
-  const LeftNavbar = () => (
-    <View style={[
-      styles.leftNavbar,
-      {
-        width: 70,
-        position: "absolute",
-        top: 0,
-        left: 0,
-        bottom: 0,
-        backgroundColor: "#161616",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 50,
-        ...(Platform.OS === 'web' ? {
-          boxShadow: '4px 0 24px rgba(0, 0, 0, 0.1)'
-        } : {
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 4,
-            height: 0,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 24,
-          elevation: 5,
-        })
-      }
-    ]}>
-      <View style={{ 
-        flexDirection: "column", 
-        alignItems: "center", 
-        justifyContent: "center",
-        paddingVertical: 32,
-        gap: 32
-      }}>
-        {leftNavItems.map((item) => {
-          const isActive = pathname === item.route;
-          
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Navbar component - positioned left on web, right on mobile
+  const SideNavbar = () => {
+    // For web, keep the left sidebar behavior
+    if (isWeb) {
+      return (
+        <View style={[
+          styles.sideNavbar,
+          styles.leftNavbar
+        ]}>
+          <NavbarContent />
+        </View>
+      );
+    }
+    
+    // For mobile, show hamburger menu button and collapsible right sidebar
+    return (
+      <>
+        {/* Hamburger menu button on the top right */}
+        <TouchableOpacity 
+          style={styles.menuButton} 
+          onPress={toggleMenu}
+        >
+          <Icon name="menu" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+        
+        {/* Collapsible sidebar */}
+        {isMenuOpen && (
+          <View style={[
+            styles.sideNavbar,
+            styles.rightNavbar,
+          ]}>
+            <NavbarContent />
+          </View>
+        )}
+      </>
+    );
+  };
+
+  // Content of the navbar (used in both mobile and web versions)
+  const NavbarContent = () => (
+    <View style={{ 
+      flexDirection: "column", 
+      alignItems: "center", 
+      justifyContent: "center",
+      paddingVertical: 32,
+      gap: 32,
+      height: '100%'
+    }}>
+      {navItems.map((item, index) => {
+        const isActive = item.route && pathname === item.route;
+        const isCloseButton = index === 0 && !isWeb;
+        
+        // Handle close button separately
+        if (isCloseButton) {
           return (
             <TouchableOpacity
               key={item.name}
-              style={{ position: "relative", alignItems: "center", justifyContent: "center" }}
-              onPress={() => {
-                router.push(item.route as any);
-              }}
+              style={styles.navItemContainer}
+              onPress={toggleMenu}
             >
-              <View style={{ alignItems: "center", justifyContent: "center", width: 40, height: 40 }}>
+              <View style={styles.navIconContainer}>
                 <Icon
                   name={item.icon}
                   size={24}
-                  color={isActive ? '#FFFFFF' : '#9CA3AF'}
+                  color="#FFFFFF"
                 />
               </View>
-              
-              {isActive && (
-                <View style={[
-                  styles.activeIndicator,
-                  { right: -12 }
-                ]} />
-              )}
             </TouchableOpacity>
           );
-        })}
-      </View>
+        }
+        
+        // Skip close button on web
+        if (index === 0 && isWeb) {
+          return null;
+        }
+
+        return (
+          <TouchableOpacity
+            key={item.name}
+            style={[
+              styles.navItemContainer,
+              isActive && styles.activeNavItem
+            ]}
+            onPress={() => {
+              if (item.route) {
+                router.push(item.route as any);
+                if (!isWeb) setIsMenuOpen(false); // Close menu after selection on mobile
+              }
+            }}
+          >
+            <View style={[
+              styles.navIconContainer,
+              isActive && styles.activeIconContainer
+            ]}>
+              <Icon
+                name={item.icon}
+                size={24}
+                color={isActive ? '#FFFFFF' : '#9CA3AF'}
+              />
+            </View>
+            
+            {isActive && (
+              <View style={[
+                styles.highlightOverlay
+              ]} />
+            )}
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Render Left Navbar */}
-      <LeftNavbar />
+      {/* Render Side Navbar */}
+      <SideNavbar />
       
-      <View style={{ flex: 1, marginLeft: 70 }}>
+      <View style={isWeb ? { flex: 1, marginLeft: 70 } : { flex: 1 }}>
         {/* Main Content Area */}
         <Tabs
           screenOptions={{
@@ -159,14 +214,7 @@ const _Layout = () => {
                 right: 20,
                 borderRadius: 16,
                 height: 64,
-                elevation: 0,
-                shadowColor: "#000",
-                shadowOpacity: 0.1,
-                shadowRadius: 24,
-                shadowOffset: {
-                  width: 0,
-                  height: 4,
-                },
+                elevation: 5,
               },
             }),
             tabBarItemStyle: {
@@ -300,7 +348,7 @@ const _Layout = () => {
             }}
           />
 
-          {/* Add screens for left navbar routes */}
+          {/* Add screens for navbar routes */}
           <Tabs.Screen
             name="accolades"
             options={{ href: null }}
@@ -327,28 +375,98 @@ const _Layout = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  leftNavbar: Platform.select({
-    web: {
-      boxShadow: '4px 0 24px rgba(0, 0, 0, 0.1)'
-    },
-    default: {
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 4,
-        height: 0,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 24,
+// Create platform-specific shadow styles to avoid warnings
+const createShadowStyle = (direction = 'right') => {
+  if (Platform.OS === 'web') {
+    return {
+      boxShadow: direction === 'right' 
+        ? '4px 0 24px rgba(0, 0, 0, 0.1)' 
+        : '-4px 0 24px rgba(0, 0, 0, 0.1)'
+    };
+  } else {
+    return {
       elevation: 5,
-    }
-  }),
-  activeIndicator: {
+    };
+  }
+};
+
+const createMenuButtonShadow = () => {
+  if (Platform.OS === 'web') {
+    return {
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.25)'
+    };
+  } else {
+    return {
+      elevation: 5
+    };
+  }
+};
+
+const styles = StyleSheet.create({
+  sideNavbar: {
+    width: 70,
     position: "absolute",
-    width: 1,
-    height: 16,
-    backgroundColor: "white",
-    borderRadius: 4
+    top: 0,
+    bottom: 0,
+    backgroundColor: "#161616",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-between",
+    zIndex: 50,
+  },
+  leftNavbar: {
+    left: 0,
+    ...createShadowStyle('right')
+  },
+  rightNavbar: {
+    right: 0,
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+    overflow: 'hidden',
+    ...createShadowStyle('left')
+  },
+  menuButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 100,
+    backgroundColor: '#161616',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...createMenuButtonShadow()
+  },
+  navItemContainer: {
+    position: "relative",
+    width: 70,
+    height: 70,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  navIconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'transparent',
+  },
+  activeIconContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  activeNavItem: {
+    position: 'relative',
+  },
+  highlightOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    width: 70,
+    height: 70,
+    backgroundColor: 'rgba(249, 168, 37, 0.2)',
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
   },
   bottomTabIndicator: {
     width: 1,
