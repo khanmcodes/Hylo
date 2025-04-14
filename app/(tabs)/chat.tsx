@@ -3,7 +3,8 @@ import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Flat
 import { Feather } from '@expo/vector-icons';
 import InterText from '../../components/InterText';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-// import { GEN_AI_KEY } from '@env';
+import { GEN_AI_KEY } from '@env';
+
 // Define message interface
 interface Message {
   id: string;
@@ -14,10 +15,8 @@ interface Message {
   isError?: boolean;
 }
 
-// Initialize the Gemini AI with your API key
-const genAI = new GoogleGenerativeAI('AIzaSyAxWR5_y8AoHxiMp0VV-lZR1yr5s7jRxqA');
-// const genAI = new GoogleGenerativeAI(process.env.GEN_AI_KEY || '');
-// const genAI = new GoogleGenerativeAI(GEN_AI_KEY);
+// Initialize the Gemini AI with your API key from .env
+const genAI = new GoogleGenerativeAI(GEN_AI_KEY);
 
 // Configure the Gemini model
 const MODEL_NAME = 'gemini-2.0-flash';
@@ -53,7 +52,7 @@ const Chat = () => {
       
       // Handle common errors
       if (error.message?.includes('API key')) {
-        throw new Error('API Key Error: Invalid or missing API key. Please check your Gemini API key.');
+        throw new Error('API Key Error: Invalid or missing API key. Please check your Gemini API key in .env file.');
       }
       
       if (error.message?.includes('403')) {
