@@ -19,7 +19,7 @@ const MyCourses = () => {
   const { width } = useWindowDimensions();
   const isMobile = width < 640; // Tailwind 'sm' starts at 640px
 
-  const courses = [
+  const coursesActionCard = [
     { emoji: '📑', title: 'Create a Course', color: ['#3B82F6', '#1e1e1e'] as [string, string], desc: 'Upload a document or course outline, Hylo will generate learning materials, quizzes, and a study plan.', action: () => setModalVisible(true), btn: 'Get Started' },
     { emoji: '🧠', title: 'Quiz Me', color: ['#8B5CF6', '#1e1e1e'] as [string, string], desc: 'Take AI-generated quizzes based on your courses. Improve retention and track progress.', btn: 'Quiz Me' },
     { emoji: '💡', title: 'Flashcards', color: ['#FACC15', '#1e1e1e'] as [string, string], desc: 'Generate smart flashcards and concise notes from your course materials to reinforce learning.', btn: 'Create Flashcards' },
@@ -56,11 +56,11 @@ const MyCourses = () => {
 
   return (
     <ScrollView className="flex-1 bg-dark-300 px-4 sm:px-24 py-9 lg:py-10">
-      <InterText className="text-2xl font-medium text-white text-center mb-4">My Courses</InterText>
+      <InterText className="text-base sm:text-2xl font-medium text-white text-center mb-4">My Courses</InterText>
 
       {/* Cards Grid */}
       <View className="flex flex-wrap p-4 flex-row justify-center">
-        {courses.map((course, index) => (
+        {coursesActionCard.map((course, index) => (
           <TouchableOpacity
             key={index}
             className="w-[50%] sm:w-[48%] md:w-[20%] lg:w-[30%] xl:w-[24%] p-1 sm:p-3 rounded-xl "
