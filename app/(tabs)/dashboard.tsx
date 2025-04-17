@@ -1,10 +1,9 @@
-import { View, Image, ScrollView, Pressable } from "react-native";
+import { View, Image, ScrollView } from "react-native";
 import React, { useState } from "react";
 import InterText from "../../components/InterText";
 import { useAuth } from "../../contexts/AuthContext";
 import ShortcutCard, { ShortcutType } from "../../components/ShortcutCard";
 import CreateShortcutModal from "../../components/CreateShortcutModal";
-import { Ionicons } from "@expo/vector-icons";
 
 interface Shortcut {
   id: string;
@@ -21,7 +20,6 @@ export default function Dashboard() {
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.username;
   const profilePicture = user?.user_metadata?.avatar_url;
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-  const [selectedShortcut, setSelectedShortcut] = useState<Shortcut | null>(null);
   const [shortcuts, setShortcuts] = useState<Shortcut[]>([
     {
       id: '1',
@@ -38,58 +36,77 @@ export default function Dashboard() {
       title: 'Resume',
       content: 'resume.pdf',
       emoji: '📄',
-      color: ['#FF6B6B', '#FF8E8E'] as [string, string],
+      color: ['#FF6B6B', '#FF6B6B'] as [string, string],
       isSet: true,
     },
     {
       id: '3',
-      type: 'todo' as ShortcutType,
-      title: 'Shopping',
-      content: 'Buy groceries',
-      emoji: '🛒',
-      color: ['#4ECDC4', '#45B7AF'] as [string, string],
+      type: 'link' as ShortcutType,
+      title: 'GitHub',
+      content: 'https://github.com',
+      emoji: '💻',
+      color: ['#4ECDC4', '#4ECDC4'] as [string, string],
       isSet: true,
     },
     {
       id: '4',
-      type: 'notes' as ShortcutType,
-      title: 'Ideas',
-      content: 'Project ideas',
-      emoji: '💡',
-      color: ['#FFD166', '#FFB700'] as [string, string],
+      type: 'document' as ShortcutType,
+      title: 'Project',
+      content: 'project.pdf',
+      emoji: '📁',
+      color: ['#FFD166', '#FFD166'] as [string, string],
       isSet: true,
     },
   ]);
 
-  const handleCreateShortcut = (newShortcut: Omit<Shortcut, 'id' | 'isSet'>) => {
-    const updatedShortcuts = [...shortcuts];
-    const index = selectedShortcut ? shortcuts.findIndex(s => s.id === selectedShortcut.id) : -1;
-    
-    if (index !== -1) {
-      // Update existing shortcut
-      updatedShortcuts[index] = {
-        ...updatedShortcuts[index],
-        ...newShortcut,
-        isSet: true,
-      };
+  const handleAddShortcut = (newShortcutData: Omit<Shortcut, "id" | "isSet">) => {
+    const newShortcut: Shortcut = {
+      ...newShortcutData,
+      id: Date.now().toString(),
+      isSet: true,
+    };
+    setShortcuts([...shortcuts, newShortcut]);
+    setIsCreateModalVisible(false);
+  };
+  
+  const handleSetShortcut = (newShortcutData: Omit<Shortcut, "id" | "isSet">) => {
+    const unsetIndex = shortcuts.findIndex(s => !s.isSet);
+    let updatedShortcuts;
+
+    if (unsetIndex !== -1) {
+        updatedShortcuts = shortcuts.map((shortcut, index) => 
+            index === unsetIndex 
+            ? { ...newShortcutData, id: shortcut.id, isSet: true }
+            : shortcut
+        );
     } else {
-      // Add new shortcut
-      updatedShortcuts.push({
-        ...newShortcut,
-        id: Date.now().toString(),
-        isSet: true,
-      });
+        const newShortcut: Shortcut = {
+            ...newShortcutData,
+            id: Date.now().toString(), 
+            isSet: true,
+        };
+        updatedShortcuts = [...shortcuts, newShortcut]; 
     }
     
     setShortcuts(updatedShortcuts);
-    setSelectedShortcut(null);
     setIsCreateModalVisible(false);
   };
 
   const handleResetShortcut = (shortcutId: string) => {
-    setShortcuts(shortcuts.map(shortcut => 
-      shortcut.id === shortcutId ? { ...shortcut, isSet: false, content: '', title: '', emoji: '➕', color: ['#333', '#292929'] as [string, string] } : shortcut
-    ));
+    setShortcuts(
+      shortcuts.map((shortcut) =>
+        shortcut.id === shortcutId
+          ? {
+              ...shortcut,
+              isSet: false,
+              content: "",
+              title: "",
+              emoji: "➕",
+              color: ["#333", "#292929"] as [string, string],
+            }
+          : shortcut
+      )
+    );
   };
 
   return (
@@ -135,19 +152,12 @@ export default function Dashboard() {
                 onPress={() => {
                   if (shortcut.type === 'link' && shortcut.content) {
                     window.open(shortcut.content, '_blank');
-                  } else if (shortcut.type === 'todo') {
-                    // Handle todo list
-                    console.log('Opening todo list:', shortcut.content);
-                  } else if (shortcut.type === 'notes') {
-                    // Handle notes
-                    console.log('Opening notes:', shortcut.content);
                   } else if (shortcut.type === 'document') {
                     // Handle document
                     console.log('Opening document:', shortcut.content);
                   }
                 }}
                 onEdit={() => {
-                  setSelectedShortcut(shortcut);
                   setIsCreateModalVisible(true);
                 }}
                 onReset={() => handleResetShortcut(shortcut.id)}
@@ -162,10 +172,8 @@ export default function Dashboard() {
         visible={isCreateModalVisible}
         onClose={() => {
           setIsCreateModalVisible(false);
-          setSelectedShortcut(null);
         }}
-        onSave={handleCreateShortcut}
-        initialData={selectedShortcut}
+        onSave={handleSetShortcut}
       />
     </ScrollView>
   );

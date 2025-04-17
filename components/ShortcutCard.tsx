@@ -5,7 +5,7 @@ import InterText from './InterText';
 import Feather from 'react-native-vector-icons/Feather';
 import { BlurView } from 'expo-blur';
 
-export type ShortcutType = 'link' | 'document' | 'todo' | 'notes';
+export type ShortcutType = 'link' | 'document';
 
 interface ShortcutCardProps {
   title: string;
@@ -70,7 +70,6 @@ const ShortcutCard: React.FC<ShortcutCardProps> = ({
             borderColor: '#292929',
           }}
         >
-          
           <View className='flex flex-row justify-between'>
             <View className='flex'>
               <InterText className="text-4xl text-white">{emoji}</InterText>
@@ -118,16 +117,6 @@ const ShortcutCard: React.FC<ShortcutCardProps> = ({
                   >
                     <Feather name="play" size={20} color="white" />
                     <InterText className="text-white ml-3">Run Shortcut</InterText>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => {
-                      setShowMenu(false);
-                      onEdit();
-                    }}
-                    className="flex-row items-center p-3 rounded-lg hover:bg-dark-300"
-                  >
-                    <Feather name="edit" size={20} color="white" />
-                    <InterText className="text-white ml-3">Edit Shortcut</InterText>
                   </Pressable>
                   <Pressable
                     onPress={() => {
