@@ -5,7 +5,7 @@ import InterText from './InterText';
 import Feather from 'react-native-vector-icons/Feather';
 import { BlurView } from 'expo-blur';
 
-export type ShortcutType = 'link' | 'document' | 'todo' | 'notes' | 'custom';
+export type ShortcutType = 'link' | 'document' | 'todo' | 'notes';
 
 interface ShortcutCardProps {
   title: string;
@@ -74,25 +74,23 @@ const ShortcutCard: React.FC<ShortcutCardProps> = ({
           <View className='flex flex-row justify-between'>
             <View className='flex'>
               <InterText className="text-4xl text-white">{emoji}</InterText>
-              <InterText className="text-lg font-medium text-white mt-4">
+              <InterText className="text-lg font-medium text-white mt-2">
                 {title}
               </InterText>
               {!isSet && (
-                <InterText className="text-xs text-gray-400 mt-2 font-medium">
+                <InterText className="text-xs text-gray-400 mt-1 font-medium">
                   Tap to set shortcut
                 </InterText>
               )}
             </View>
-            <View>
-              {isWeb && (
-                <Pressable
-                  onPress={() => setShowMenu(true)}
-                  className="rounded-full hover:bg-white/10"
-                >
-                  <Feather name="more-vertical" size={20} color="white" />
-                </Pressable>
-              )}
-            </View>
+            {isWeb && (
+              <Pressable
+                onPress={() => setShowMenu(true)}
+                className="rounded-full hover:bg-white/10 p-2"
+              >
+                <Feather name="more-vertical" size={20} color="white" />
+              </Pressable>
+            )}
           </View>
         </LinearGradient>
       </TouchableOpacity>

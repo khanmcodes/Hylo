@@ -29,21 +29,21 @@ interface CreateShortcutModalProps {
 }
 
 const shortcutTypes = [
-  { type: 'link', emoji: '🔗', title: 'Quick Link', color: ['#4285F4'] },
-  { type: 'document', emoji: '📄', title: 'Document', color: ['#FF6B6B'] },
-  { type: 'todo', emoji: '✅', title: 'Todo List', color: ['#4ECDC4'] },
-  { type: 'notes', emoji: '📝', title: 'Quick Notes', color: ['#FFD166'] },
+  { type: 'link', emoji: '🔗', title: 'Quick Link', color: ['#4285F4', '#4285F4'] },
+  { type: 'document', emoji: '📄', title: 'Document', color: ['#FF6B6B', '#FF6B6B'] },
+  { type: 'todo', emoji: '✅', title: 'Todo List', color: ['#4ECDC4', '#4ECDC4'] },
+  { type: 'notes', emoji: '📝', title: 'Quick Notes', color: ['#FFD166', '#FFD166'] },
 ];
 
 const emojiOptions = ['🔗', '📄', '✅', '📝', '🔍', '📚', '📅', '💡', '🎯', '✨'];
 
 const colorOptions: [string, string][] = [
-  ['#4285F4', '#34A853'], // Google colors
-  ['#FF6B6B', '#FF8E8E'], // Red gradient
-  ['#4ECDC4', '#45B7AF'], // Teal gradient
-  ['#FFD166', '#FFB700'], // Yellow gradient
-  ['#A78BFA', '#8B5CF6'], // Purple gradient
-  ['#F87171', '#EF4444'], // Deep red gradient
+  ['#4285F4', '#4285F4'], // Blue
+  ['#FF6B6B', '#FF6B6B'], // Red
+  ['#4ECDC4', '#4ECDC4'], // Teal
+  ['#FFD166', '#FFD166'], // Yellow
+  ['#A78BFA', '#A78BFA'], // Purple
+  ['#F87171', '#F87171'], // Deep red
 ];
 
 const CreateShortcutModal: React.FC<CreateShortcutModalProps> = ({
