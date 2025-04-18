@@ -11,7 +11,7 @@ interface Shortcut {
   title: string;
   content: string;
   emoji: string;
-  color: [string, string];
+  color: string;
   isSet: boolean;
 }
 
@@ -27,7 +27,7 @@ export default function Dashboard() {
       title: 'Google',
       content: 'https://google.com',
       emoji: '🔍',
-      color: ['#4285F4', '#4285F4'] as [string, string],
+      color: '#FF6B6B',
       isSet: true,
     },
     {
@@ -36,7 +36,7 @@ export default function Dashboard() {
       title: 'Resume',
       content: 'resume.pdf',
       emoji: '📄',
-      color: ['#FF6B6B', '#FF6B6B'] as [string, string],
+      color: '#4285F4',
       isSet: true,
     },
     {
@@ -45,7 +45,7 @@ export default function Dashboard() {
       title: 'GitHub',
       content: 'https://github.com',
       emoji: '💻',
-      color: ['#4ECDC4', '#4ECDC4'] as [string, string],
+      color: '#34C759',
       isSet: true,
     },
     {
@@ -54,7 +54,7 @@ export default function Dashboard() {
       title: 'Project',
       content: 'project.pdf',
       emoji: '📁',
-      color: ['#FFD166', '#FFD166'] as [string, string],
+      color: '#5AC8FA',
       isSet: true,
     },
   ]);
@@ -102,7 +102,7 @@ export default function Dashboard() {
               content: "",
               title: "",
               emoji: "➕",
-              color: ["#333", "#292929"] as [string, string],
+              color: "#292929",
             }
           : shortcut
       )
