@@ -217,7 +217,35 @@ export default function Profile() {
           }
 
           const filePath = `${user?.id}/profile.jpg`;
-          const publicUrl = await uploadImage(compressedImage.base64, filePath);
+
+          // Delete existing avatar if it exists
+          try {
+            const { data: existingFiles } = await supabase.storage
+              .from("avatars")
+              .list(user?.id || "");
+
+            if (existingFiles && existingFiles.length > 0) {
+              await supabase.storage
+                .from("avatars")
+                .remove([`${user?.id}/profile.jpg`]);
+            }
+          } catch (deleteError) {
+            console.log("No existing avatar or error deleting:", deleteError);
+          }
+
+          // Upload new image
+          const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(filePath, decode(compressedImage.base64), {
+              contentType: "image/jpeg",
+              upsert: true,
+            });
+
+          if (uploadError) throw uploadError;
+
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("avatars").getPublicUrl(filePath);
 
           // Update profile with new avatar URL
           const { error: updateError } = await supabase
@@ -429,7 +457,10 @@ export default function Profile() {
                       : "bg-dark-400"
                   }`}
                   onPress={() =>
-                    setProfileData((prev) => ({ ...prev, theme_preference: theme }))
+                    setProfileData((prev) => ({
+                      ...prev,
+                      theme_preference: theme,
+                    }))
                   }
                 >
                   <InterText

@@ -17,49 +17,59 @@ interface Shortcut {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.username;
-  const profilePicture = user?.user_metadata?.avatar_url;
+  const displayName =
+    user?.user_metadata?.full_name || user?.user_metadata?.username;
+  const profilePicture =
+    user?.user_metadata?.avatar_url ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      displayName || "User"
+    )}&background=random&color=fff`;
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [shortcuts, setShortcuts] = useState<Shortcut[]>([
     {
-      id: '1',
-      type: 'link' as ShortcutType,
-      title: 'Google',
-      content: 'https://google.com',
-      emoji: '🔍',
-      color: '#FF6B6B',
+
+      id: "1",
+      type: "link" as ShortcutType,
+      title: "Google",
+      content: "https://google.com",
+      emoji: "🔍",
+      color: ["#4285F4", "#4285F4"] as [string, string],
       isSet: true,
     },
     {
-      id: '2',
-      type: 'document' as ShortcutType,
-      title: 'Resume',
-      content: 'resume.pdf',
-      emoji: '📄',
-      color: '#4285F4',
+      id: "2",
+      type: "document" as ShortcutType,
+      title: "Resume",
+      content: "resume.pdf",
+      emoji: "📄",
+      color: ["#FF6B6B", "#FF6B6B"] as [string, string],
       isSet: true,
     },
     {
-      id: '3',
-      type: 'link' as ShortcutType,
-      title: 'GitHub',
-      content: 'https://github.com',
-      emoji: '💻',
-      color: '#34C759',
+      id: "3",
+      type: "link" as ShortcutType,
+      title: "GitHub",
+      content: "https://github.com",
+      emoji: "💻",
+      color: ["#4ECDC4", "#4ECDC4"] as [string, string],
       isSet: true,
     },
     {
-      id: '4',
-      type: 'document' as ShortcutType,
-      title: 'Project',
-      content: 'project.pdf',
-      emoji: '📁',
-      color: '#5AC8FA',
+      id: "4",
+      type: "document" as ShortcutType,
+      title: "Project",
+      content: "project.pdf",
+      emoji: "📁",
+      color: ["#FFD166", "#FFD166"] as [string, string],
+
+
       isSet: true,
     },
   ]);
 
-  const handleAddShortcut = (newShortcutData: Omit<Shortcut, "id" | "isSet">) => {
+  const handleAddShortcut = (
+    newShortcutData: Omit<Shortcut, "id" | "isSet">
+  ) => {
     const newShortcut: Shortcut = {
       ...newShortcutData,
       id: Date.now().toString(),
@@ -68,26 +78,28 @@ export default function Dashboard() {
     setShortcuts([...shortcuts, newShortcut]);
     setIsCreateModalVisible(false);
   };
-  
-  const handleSetShortcut = (newShortcutData: Omit<Shortcut, "id" | "isSet">) => {
-    const unsetIndex = shortcuts.findIndex(s => !s.isSet);
+
+  const handleSetShortcut = (
+    newShortcutData: Omit<Shortcut, "id" | "isSet">
+  ) => {
+    const unsetIndex = shortcuts.findIndex((s) => !s.isSet);
     let updatedShortcuts;
 
     if (unsetIndex !== -1) {
-        updatedShortcuts = shortcuts.map((shortcut, index) => 
-            index === unsetIndex 
-            ? { ...newShortcutData, id: shortcut.id, isSet: true }
-            : shortcut
-        );
+      updatedShortcuts = shortcuts.map((shortcut, index) =>
+        index === unsetIndex
+          ? { ...newShortcutData, id: shortcut.id, isSet: true }
+          : shortcut
+      );
     } else {
-        const newShortcut: Shortcut = {
-            ...newShortcutData,
-            id: Date.now().toString(), 
-            isSet: true,
-        };
-        updatedShortcuts = [...shortcuts, newShortcut]; 
+      const newShortcut: Shortcut = {
+        ...newShortcutData,
+        id: Date.now().toString(),
+        isSet: true,
+      };
+      updatedShortcuts = [...shortcuts, newShortcut];
     }
-    
+
     setShortcuts(updatedShortcuts);
     setIsCreateModalVisible(false);
   };
@@ -150,11 +162,11 @@ export default function Dashboard() {
                 isSet={shortcut.isSet}
                 content={shortcut.content}
                 onPress={() => {
-                  if (shortcut.type === 'link' && shortcut.content) {
-                    window.open(shortcut.content, '_blank');
-                  } else if (shortcut.type === 'document') {
+                  if (shortcut.type === "link" && shortcut.content) {
+                    window.open(shortcut.content, "_blank");
+                  } else if (shortcut.type === "document") {
                     // Handle document
-                    console.log('Opening document:', shortcut.content);
+                    console.log("Opening document:", shortcut.content);
                   }
                 }}
                 onEdit={() => {

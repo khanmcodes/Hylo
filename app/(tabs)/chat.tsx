@@ -1,9 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, FlatList, ActivityIndicator } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import InterText from '../../components/InterText';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GEN_AI_KEY } from '@env';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import InterText from "../../components/InterText";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GEN_AI_KEY } from "@env";
 
 // Define message interface
 interface Message {
@@ -19,12 +27,17 @@ interface Message {
 const genAI = new GoogleGenerativeAI(GEN_AI_KEY);
 
 // Configure the Gemini model
-const MODEL_NAME = 'gemini-2.0-flash';
+const MODEL_NAME = "gemini-2.0-flash";
 
 const Chat = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', text: 'Hello! How can I help you today?', isBot: true, timestamp: '10:30 AM' },
+    {
+      id: "1",
+      text: "Hello! How can I help you today?",
+      isBot: true,
+      timestamp: "10:30 AM",
+    },
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef<FlatList<Message>>(null);
@@ -33,101 +46,129 @@ const Chat = () => {
   const getAIResponse = async (userMessage: string) => {
     try {
       setIsLoading(true);
-      
-      console.log(`Calling Gemini API (${MODEL_NAME}) with message:`, userMessage);
-      
+
+      console.log(
+        `Calling Gemini API (${MODEL_NAME}) with message:`,
+        userMessage
+      );
+
       // Get the model
       const model = genAI.getGenerativeModel({ model: MODEL_NAME });
-      
+
       // Generate content
       const result = await model.generateContent(userMessage);
       const response = await result.response;
       const text = response.text();
-      
+
       console.log("API Response:", text);
-      
+
       return text;
     } catch (error: any) {
-      console.error('Error in getAIResponse:', error);
-      
+      console.error("Error in getAIResponse:", error);
+
       // Handle common errors
-      if (error.message?.includes('API key')) {
-        throw new Error('API Key Error: Invalid or missing API key. Please check your Gemini API key in .env file.');
+      if (error.message?.includes("API key")) {
+        throw new Error(
+          "API Key Error: Invalid or missing API key. Please check your Gemini API key in .env file."
+        );
       }
-      
-      if (error.message?.includes('403')) {
-        throw new Error('Authorization Error: Your API key doesn\'t have permission to access this model. Make sure you have enabled the Gemini API in Google Cloud Console.');
+
+      if (error.message?.includes("403")) {
+        throw new Error(
+          "Authorization Error: Your API key doesn't have permission to access this model. Make sure you have enabled the Gemini API in Google Cloud Console."
+        );
       }
-      
-      if (error.message?.includes('404')) {
-        throw new Error(`Model Error: The model "${MODEL_NAME}" was not found. Check if the model name is correct.`);
+
+      if (error.message?.includes("404")) {
+        throw new Error(
+          `Model Error: The model "${MODEL_NAME}" was not found. Check if the model name is correct.`
+        );
       }
-      
-      if (error.message?.includes('429')) {
-        throw new Error('Rate Limit Exceeded: You have sent too many requests. Please wait a few minutes and try again.');
+
+      if (error.message?.includes("429")) {
+        throw new Error(
+          "Rate Limit Exceeded: You have sent too many requests. Please wait a few minutes and try again."
+        );
       }
-      
+
       // Generic error
-      throw new Error(`AI Error: ${error.message || 'Unknown error occurred'}`);
+      throw new Error(`AI Error: ${error.message || "Unknown error occurred"}`);
     } finally {
       setIsLoading(false);
     }
   };
 
   const sendMessage = async () => {
-    if (message.trim() === '') return;
-    
+    if (message.trim() === "") return;
+
     const newMessage = {
       id: Date.now().toString(),
       text: message,
       isBot: false,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
-    
+
     setMessages([...messages, newMessage]);
     const userMessageText = message;
-    setMessage('');
-    
+    setMessage("");
+
     try {
       // Add loading message
       const loadingMsgId = Date.now() + 1;
-      setMessages(prev => [...prev, {
-        id: loadingMsgId.toString(),
-        text: '...',
-        isBot: true,
-        isLoading: true,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }]);
-      
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: loadingMsgId.toString(),
+          text: "...",
+          isBot: true,
+          isLoading: true,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        },
+      ]);
+
       // Get response from AI
       const botResponseText = await getAIResponse(userMessageText);
-      
+
       // Remove loading message
-      setMessages(prev => prev.filter(msg => msg.id !== loadingMsgId.toString()));
-      
+      setMessages((prev) =>
+        prev.filter((msg) => msg.id !== loadingMsgId.toString())
+      );
+
       // Add AI response
       const botResponse = {
         id: (Date.now() + 2).toString(),
         text: botResponseText,
         isBot: true,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
-      
-      setMessages(prev => [...prev, botResponse]);
+
+      setMessages((prev) => [...prev, botResponse]);
     } catch (error: any) {
       // Remove loading message if it exists
-      setMessages(prev => prev.filter(msg => !msg.isLoading));
-      
+      setMessages((prev) => prev.filter((msg) => !msg.isLoading));
+
       // Show the actual error message
       const errorResponse = {
         id: (Date.now() + 2).toString(),
         text: error.message || "API Error. Please check console for details.",
         isBot: true,
         isError: true,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
-      
-      setMessages(prev => [...prev, errorResponse]);
+
+      setMessages((prev) => [...prev, errorResponse]);
     }
   };
 
@@ -139,24 +180,26 @@ const Chat = () => {
   }, [messages]);
 
   const renderMessage = ({ item }: { item: Message }) => (
-    <View 
-      className={`mb-4 max-w-[80%] ${item.isBot ? 'self-start' : 'self-end'}`}
+    <View
+      className={`mb-4 max-w-[80%] ${item.isBot ? "self-start" : "self-end"}`}
     >
-      <View 
+      <View
         className={`rounded-2xl p-3 ${
-          item.isBot 
-            ? 'bg-dark-200 rounded-tl-none' 
-            : 'bg-primary rounded-tr-none'
+          item.isBot
+            ? "bg-dark-200 rounded-tl-none"
+            : "bg-primary rounded-tr-none"
         }`}
       >
         {item.isLoading ? (
           <ActivityIndicator size="small" color="#9CA3AF" />
         ) : item.isError ? (
-          <InterText className="text-red-500 text-base">
-            {item.text}
-          </InterText>
+          <InterText className="text-red-500 text-base">{item.text}</InterText>
         ) : (
-          <InterText className={`${item.isBot ? 'text-gray-100' : 'text-white'} text-base`}>
+          <InterText
+            className={`${
+              item.isBot ? "text-gray-100" : "text-white"
+            } text-base`}
+          >
             {item.text}
           </InterText>
         )}
@@ -169,7 +212,7 @@ const Chat = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1 bg-dark-300"
     >
       {/* Header */}
@@ -179,8 +222,12 @@ const Chat = () => {
             <Feather name="message-circle" size={20} color="white" />
           </View>
           <View>
-            <InterText className="text-white text-lg font-semibold">Hylo AI Assistant</InterText>
-            <InterText className="text-gray-400 text-xs">Powered by Google Gemini 2.0</InterText>
+            <InterText className="text-white text-lg font-semibold">
+              Hylo AI Assistant
+            </InterText>
+            <InterText className="text-gray-400 text-xs">
+              Powered by Google Gemini 2.0
+            </InterText>
           </View>
         </View>
       </View>
@@ -208,10 +255,12 @@ const Chat = () => {
             multiline
             editable={!isLoading}
           />
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={sendMessage}
-            disabled={isLoading || message.trim() === ''}
-            className={`${isLoading || message.trim() === '' ? 'bg-gray-600' : 'bg-primary'} w-10 h-10 rounded-full items-center justify-center`}
+            disabled={isLoading || message.trim() === ""}
+            className={`${
+              isLoading || message.trim() === "" ? "bg-gray-600" : "bg-primary"
+            } w-10 h-10 rounded-full items-center justify-center`}
           >
             {isLoading ? (
               <ActivityIndicator size="small" color="white" />
