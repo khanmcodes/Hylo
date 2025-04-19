@@ -11,7 +11,7 @@ interface Shortcut {
   title: string;
   content: string;
   emoji: string;
-  color: [string, string];
+  color: string;
   isSet: boolean;
 }
 
@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [shortcuts, setShortcuts] = useState<Shortcut[]>([
     {
+
       id: "1",
       type: "link" as ShortcutType,
       title: "Google",
@@ -60,6 +61,8 @@ export default function Dashboard() {
       content: "project.pdf",
       emoji: "📁",
       color: ["#FFD166", "#FFD166"] as [string, string],
+
+
       isSet: true,
     },
   ]);
@@ -111,7 +114,7 @@ export default function Dashboard() {
               content: "",
               title: "",
               emoji: "➕",
-              color: ["#333", "#292929"] as [string, string],
+              color: "#292929",
             }
           : shortcut
       )
