@@ -21,6 +21,8 @@ const MyCourses = () => {
   const [fileType, setFileType] = useState("");
   const [mode, setMode] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const { width } = useWindowDimensions();
   const isMobile = width < 640; // Tailwind 'sm' starts at 640px
 
@@ -83,51 +85,97 @@ const MyCourses = () => {
       return;
     }
 
+    if (!mode) {
+      alert("Please select a mode (Podcast Mode or Study Notes).");
+      return;
+    }
+
     setIsUploading(true);
+    setUploadProgress(0);
+    setUploadError(null);
 
     const formData = new FormData();
 
+    // Add metadata to the form
+    formData.append("fileType", fileType);
+    formData.append("mode", mode);
+
+    // Process each file
     for (const file of files) {
       try {
         const response = await fetch(file.uri);
         const blob = await response.blob();
 
-        formData.append("file", blob, file.name); // Append the Blob with the filename
+        // Add file to form data with proper name
+        formData.append("file", blob, file.name);
       } catch (error) {
         setIsUploading(false);
-        alert(`Error creating blob for ${file.name}`);
+        setUploadError(`Error processing ${file.name}`);
         console.error(`Error creating blob for ${file.name}:`, error);
-        return; // Stop the upload if blob creation fails for any file
+        return;
       }
     }
 
     try {
-      const response = await fetch("https://hylo-api.onrender.com/upload", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      // Use XMLHttpRequest for progress tracking
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round(
+            (event.loaded / event.total) * 100
+          );
+          setUploadProgress(percentComplete);
+        }
       });
 
-      const data = await response.json();
+      xhr.addEventListener("load", () => {
+        setIsUploading(false);
 
-      setIsUploading(false);
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            console.log("Upload successful:", data);
+            alert("Course material uploaded and processed successfully!");
+            setModalVisible(false);
+            setFiles([]);
+            setFileType("");
+            setMode("");
+            setUploadProgress(0);
+          } catch (e) {
+            setUploadError("Error processing server response");
+            console.error("Error parsing response:", e);
+          }
+        } else {
+          try {
+            const errorData = JSON.parse(xhr.responseText);
+            setUploadError(errorData.error || "Upload failed");
+            console.error("Upload failed:", errorData);
+          } catch (e) {
+            setUploadError(`Server error: ${xhr.status}`);
+            console.error("Error parsing error response:", e);
+          }
+        }
+      });
 
-      if (response.ok) {
-        alert("Course material uploaded and processed successfully!");
-        console.log("Upload successful:", data);
-        setModalVisible(false);
-        setFiles([]);
-        setFileType("");
-        setMode("");
-      } else {
-        alert(`Upload failed: ${data.error || "An error occurred"}`);
-        console.error("Upload failed:", data);
-      }
+      xhr.addEventListener("error", () => {
+        setIsUploading(false);
+        setUploadError("Network error during upload");
+        console.error("XHR error during upload");
+      });
+
+      xhr.addEventListener("abort", () => {
+        setIsUploading(false);
+        setUploadError("Upload was aborted");
+        console.log("Upload aborted");
+      });
+
+      // Open and send the request
+      xhr.open("POST", "https://hylo-api.onrender.com/upload");
+      xhr.send(formData);
     } catch (error) {
       setIsUploading(false);
-      alert("Network error during upload.");
+      setUploadError("Failed to initiate upload");
       console.error("Upload error:", error);
     }
   };
@@ -339,15 +387,41 @@ const MyCourses = () => {
               </View>
             )}
 
+            {/* Upload Progress Indicator */}
+            {isUploading && (
+              <View className="mt-4 mb-2">
+                <View className="w-full bg-gray-700 rounded-full h-2.5">
+                  <View
+                    className="bg-primary h-2.5 rounded-full"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </View>
+                <InterText className="text-white text-center mt-2">
+                  Uploading... {uploadProgress}%
+                </InterText>
+              </View>
+            )}
+
+            {/* Error Message */}
+            {uploadError && (
+              <View className="mt-4 mb-2 p-3 bg-red-900/30 border border-red-500 rounded-lg">
+                <InterText className="text-red-400 text-center">
+                  {uploadError}
+                </InterText>
+              </View>
+            )}
+
             <Pressable
               className={`px-6 py-1.5 bg-primary w-fit self-center rounded-full mt-5 ${
-                isUploadEnabled ? "" : "opacity-50"
+                isUploadEnabled && !isUploading ? "" : "opacity-50"
               }`}
-              onPress={isUploadEnabled ? handleUpload : undefined}
-              disabled={!isUploadEnabled}
+              onPress={
+                isUploadEnabled && !isUploading ? handleUpload : undefined
+              }
+              disabled={!isUploadEnabled || isUploading}
             >
               <InterText className="text-white text-base text-center">
-                Create Course
+                {isUploading ? "Uploading..." : "Create Course"}
               </InterText>
             </Pressable>
           </View>
